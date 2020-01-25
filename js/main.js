@@ -1,5 +1,35 @@
 'use strict';
 
+var map = document.querySelector('.map');
+map.classList.remove('map--faded');
+
+var createPins = function () {
+  var ads = generateAdsList();
+  var pinsBlock = map.querySelector('.map__pins');
+
+  for (var i = 0; i < ads.length; i++) {
+    var newPin = createPin(ads, i);
+    pinsBlock.appendChild(newPin);
+  }
+};
+
+var createPin = function (ads, i) {
+  var pinTemplate = document.querySelector('#pin').content;
+  var newPin = pinTemplate.cloneNode(true);
+  var pinButton = newPin.querySelector('.map__pin');
+  var offsetX = 50 / 2;
+  var offsetY = 70;
+
+  pinButton.style = 'left: ' + (ads[i].location.x - offsetX) + 'px; top: ' + (ads[i].location.y - offsetY) + 'px;';
+  var pinImg = newPin.querySelector('img');
+  pinImg.src = ads[i].author.avatar;
+  pinImg.alt = ads[i].offer.title;
+
+  return newPin;
+};
+
+// Создание псевдоданных
+
 var generateAdsList = function (quantity) {
   var ads = [];
   if (!quantity) {
@@ -19,12 +49,12 @@ var generateNewAd = function () {
       avatar: generateUrl()
     },
     offer: {
-      title: 'Заголовок предложения',
+      title: 'Уютное место №' + Math.ceil(Math.random() * 100),
       address: location.x + ', ' + location.y,
       price: Math.round(Math.random() * (10000 - 1000) + 1000),
       type: chooseType(),
       rooms: Math.ceil(Math.random() * 10),
-      guests: Math.ceil(Math.random() * 20),
+      guests: Math.ceil(Math.random() * 10),
       checkin: chooseCheckinCheckout(),
       checkout: chooseCheckinCheckout(),
       features: chooseFeatures(),
@@ -78,7 +108,6 @@ var generatePhotoCollection = function () {
 };
 
 var generateLocation = function () {
-  var map = document.querySelector('.map');
   var maxX = +window.getComputedStyle(map).width.slice(0, -2);
   var minY = 130;
   var maxY = 630;
@@ -87,3 +116,5 @@ var generateLocation = function () {
     y: Math.round(Math.random() * (maxY - minY) + minY)
   };
 };
+
+createPins();
