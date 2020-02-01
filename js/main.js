@@ -16,6 +16,9 @@
   var MAX_PRICE = 15000;
   var MAX_PLACES = 100;
 
+  var LEFT_MOUSE_BTN = 0;
+  var ENTER_KEY = 'Enter';
+
   var PHOTO_URLS = [
     'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
@@ -275,10 +278,88 @@
     return arr[getRandomInt(arr.length - 1)];
   };
 
-  map.classList.remove('map--faded');
+  // =================================================================
 
   var cardTemplate = document.querySelector('#card').content;
   var filterContainer = map.querySelector('.map__filters-container');
 
-  createPins();
+  var mainPin = document.querySelector('.map__pin--main');
+
+  var adForm = document.querySelector('.ad-form');
+  var adFormAvatar = adForm.querySelector('#avatar');
+  var adFormTitle = adForm.querySelector('#title');
+  var adFormAddress = adForm.querySelector('#address');
+  var adFormType = adForm.querySelector('#type');
+  var adFormPrice = adForm.querySelector('#price');
+  var adFormTimein = adForm.querySelector('#timein');
+  var adFormTimeout = adForm.querySelector('#timeout');
+  var adFormRooms = adForm.querySelector('#room_number');
+  var adFormCapacity = adForm.querySelector('#capacity');
+  var adFormFeatures = adForm.querySelector('.features');
+  var adFormDescription = adForm.querySelector('#description');
+  var adFormPhotos = adForm.querySelector('#images');
+
+  var filterForm = map.querySelector('.map__filters');
+  var filterFormType = filterForm.querySelector('#housing-type');
+  var filterFormPrice = filterForm.querySelector('#housing-price');
+  var filterFormRooms = filterForm.querySelector('#housing-rooms');
+  var filterFormCapacity = filterForm.querySelector('#housing-guests');
+  var filterFormFeatures = filterForm.querySelector('#housing-features');
+
+  var adFormInputs = [
+    adFormAvatar, adFormTitle, adFormAddress, adFormType,
+    adFormPrice, adFormTimein, adFormTimeout, adFormRooms,
+    adFormCapacity, adFormFeatures, adFormDescription, adFormPhotos
+  ];
+
+  var filterFormInputs = [
+    filterFormType, filterFormPrice, filterFormRooms,
+    filterFormCapacity, filterFormFeatures
+  ];
+
+  var onMainPinMousedown = function (ev) {
+    if (ev.button === LEFT_MOUSE_BTN) {
+      activateMap();
+    }
+  };
+  var onMainPinEnterPress = function (ev) {
+    if (ev.key === ENTER_KEY) {
+      activateMap();
+    }
+  };
+
+  var activateMap = function () {
+    map.classList.remove('map--faded');
+    enableForms();
+    setAddressValue();
+    mainPin.removeEventListener('mousedown', onMainPinMousedown);
+    mainPin.removeEventListener('keydown', onMainPinEnterPress);
+    createPins();
+  };
+
+  var disableForms = function () {
+    adForm.classList.add('ad-form--disabled');
+    changeInputsState(adFormInputs, true);
+    changeInputsState(filterFormInputs, true);
+  };
+  var enableForms = function () {
+    adForm.classList.remove('ad-form--disabled');
+    changeInputsState(adFormInputs, false);
+    changeInputsState(filterFormInputs, false);
+  };
+
+  var changeInputsState = function (inputsArr, isDisabled) {
+    for (var i = 0; i < inputsArr.length; i++) {
+      inputsArr[i].disabled = isDisabled;
+    }
+  };
+
+  var mainPinLocationY = +window.getComputedStyle(mainPin).top.slice(0, -2);
+  var setAddressValue = function () {
+    adFormAddress.value = (MAP_WIDTH / 2) + ', ' + (mainPinLocationY + PIN_HEIGHT);
+  };
+
+  disableForms();
+  mainPin.addEventListener('mousedown', onMainPinMousedown);
+  mainPin.addEventListener('keydown', onMainPinEnterPress);
 })();
