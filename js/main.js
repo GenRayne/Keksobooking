@@ -24,12 +24,6 @@
   var MAX_PRICE = 15000;
   var MAX_PLACES = 100;
 
-  var KEYS = {
-    leftMouseBtn: 0,
-    enter: 'Enter',
-    escape: 'Escape'
-  };
-
   var cardTemplate = document.querySelector('#card').content;
   var filterContainer = map.querySelector('.map__filters-container');
 
@@ -97,37 +91,43 @@
     '13:00',
     '14:00'
   ];
-  var houseTypes = {
-    bungalo: {
+  var HouseTypes = {
+    BUNGALO: {
       type: 'bungalo',
       name: 'Бунгало',
       minPrice: 0,
       placeholder: '0'
     },
-    flat: {
+    FLAT: {
       type: 'flat',
       name: 'Квартира',
       minPrice: 1000,
       placeholder: '1000'
     },
-    house: {
+    HOUSE: {
       type: 'house',
       name: 'Дом',
       minPrice: 5000,
       placeholder: '5000'
     },
-    palace: {
+    PALACE: {
       type: 'palace',
       name: 'Дворец',
       minPrice: 10000,
       placeholder: '10000'
     }
   };
-  var guestsOptions = {
+  var GuestsOptions = {
     1: adFormCapacity.querySelector('option[value="1"]'),
     2: adFormCapacity.querySelector('option[value="2"]'),
     3: adFormCapacity.querySelector('option[value="3"]'),
     0: adFormCapacity.querySelector('option[value="0"]')
+  };
+
+  var Keys = {
+    LEFT_MOUSE_BTN: 0,
+    ENTER: 'Enter',
+    ESCAPE: 'Escape'
   };
 
   var createPinsAndCards = function () {
@@ -205,17 +205,17 @@
   var choosePlaceType = function (place) {
     var type;
     switch (place) {
-      case houseTypes.bungalo.type:
-        type = houseTypes.bungalo.name;
+      case HouseTypes.BUNGALO.type:
+        type = HouseTypes.BUNGALO.name;
         break;
-      case houseTypes.flat.type:
-        type = houseTypes.flat.name;
+      case HouseTypes.FLAT.type:
+        type = HouseTypes.FLAT.name;
         break;
-      case houseTypes.house.type:
-        type = houseTypes.house.name;
+      case HouseTypes.HOUSE.type:
+        type = HouseTypes.HOUSE.name;
         break;
-      case houseTypes.palace.type:
-        type = houseTypes.palace.name;
+      case HouseTypes.PALACE.type:
+        type = HouseTypes.PALACE.name;
     }
     return type;
   };
@@ -277,7 +277,7 @@
 
   var openCard = function (cards, card) {
     var onPopupEscPress = function (ev) {
-      if (ev.key === KEYS.escape) {
+      if (ev.key === Keys.ESCAPE) {
         closeCard();
       }
     };
@@ -336,17 +336,17 @@
   var getPrice = function (type) {
     var minPrice;
     switch (type) {
-      case houseTypes.bungalo.type:
-        minPrice = houseTypes.bungalo.minPrice;
+      case HouseTypes.BUNGALO.type:
+        minPrice = HouseTypes.BUNGALO.minPrice;
         break;
-      case houseTypes.flat.type:
-        minPrice = houseTypes.flat.minPrice;
+      case HouseTypes.FLAT.type:
+        minPrice = HouseTypes.FLAT.minPrice;
         break;
-      case houseTypes.house.type:
-        minPrice = houseTypes.house.minPrice;
+      case HouseTypes.HOUSE.type:
+        minPrice = HouseTypes.HOUSE.minPrice;
         break;
-      case houseTypes.palace.type:
-        minPrice = houseTypes.palace.minPrice;
+      case HouseTypes.PALACE.type:
+        minPrice = HouseTypes.PALACE.minPrice;
     }
     return getRandomInt(MAX_PRICE, minPrice);
   };
@@ -399,12 +399,12 @@
   // ============ Активация карты и работа с формами ============
 
   var onMainPinMousedown = function (ev) {
-    if (ev.button === KEYS.leftMouseBtn) {
+    if (ev.button === Keys.LEFT_MOUSE_BTN) {
       activateMap();
     }
   };
   var onMainPinEnterPress = function (ev) {
-    if (ev.key === KEYS.enter) {
+    if (ev.key === Keys.ENTER) {
       activateMap();
     }
   };
@@ -475,29 +475,29 @@
     switch (adFormRooms.value) {
       case '1':
         changeCapacityOptionsState('disabled');
-        guestsOptions[1].disabled = false;
+        GuestsOptions[1].disabled = false;
         if (adFormCapacity.value !== '1') {
           adFormCapacity.value = '1';
         }
         break;
       case '2':
         changeCapacityOptionsState('disabled');
-        guestsOptions[1].disabled = false;
-        guestsOptions[2].disabled = false;
+        GuestsOptions[1].disabled = false;
+        GuestsOptions[2].disabled = false;
         if (adFormCapacity.value !== '1' && adFormCapacity.value !== '2') {
           adFormCapacity.value = '2';
         }
         break;
       case '3':
         changeCapacityOptionsState(false);
-        guestsOptions[0].disabled = true;
+        GuestsOptions[0].disabled = true;
         if (adFormCapacity.value === '0') {
           adFormCapacity.value = '3';
         }
         break;
       case '100':
         changeCapacityOptionsState('disabled');
-        guestsOptions[0].disabled = false;
+        GuestsOptions[0].disabled = false;
         if (adFormCapacity.value !== '0') {
           adFormCapacity.value = '0';
         }
@@ -520,21 +520,21 @@
 
   var setMinPrice = function (type) {
     switch (type) {
-      case houseTypes.bungalo.type:
-        adFormPrice.min = houseTypes.bungalo.minPrice;
-        adFormPrice.placeholder = houseTypes.bungalo.placeholder;
+      case HouseTypes.BUNGALO.type:
+        adFormPrice.min = HouseTypes.BUNGALO.minPrice;
+        adFormPrice.placeholder = HouseTypes.BUNGALO.placeholder;
         break;
-      case houseTypes.flat.type:
-        adFormPrice.min = houseTypes.flat.minPrice;
-        adFormPrice.placeholder = houseTypes.flat.placeholder;
+      case HouseTypes.FLAT.type:
+        adFormPrice.min = HouseTypes.FLAT.minPrice;
+        adFormPrice.placeholder = HouseTypes.FLAT.placeholder;
         break;
-      case houseTypes.house.type:
-        adFormPrice.min = houseTypes.house.minPrice;
-        adFormPrice.placeholder = houseTypes.house.placeholder;
+      case HouseTypes.HOUSE.type:
+        adFormPrice.min = HouseTypes.HOUSE.minPrice;
+        adFormPrice.placeholder = HouseTypes.HOUSE.placeholder;
         break;
-      case houseTypes.palace.type:
-        adFormPrice.min = houseTypes.palace.minPrice;
-        adFormPrice.placeholder = houseTypes.palace.placeholder;
+      case HouseTypes.PALACE.type:
+        adFormPrice.min = HouseTypes.PALACE.minPrice;
+        adFormPrice.placeholder = HouseTypes.PALACE.placeholder;
     }
   };
 
