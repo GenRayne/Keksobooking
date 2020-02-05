@@ -24,14 +24,18 @@
   var MAX_PRICE = 15000;
   var MAX_PLACES = 100;
 
-  var LEFT_MOUSE_BTN = 0;
-  var ENTER_KEY = 'Enter';
+  var KEYS = {
+    leftMouseBtn: 0,
+    enter: 'Enter',
+    escape: 'Escape'
+  };
 
   var cardTemplate = document.querySelector('#card').content;
   var filterContainer = map.querySelector('.map__filters-container');
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
+  var adFormAvatarLabel = adForm.querySelector('.ad-form-header__drop-zone');
   var adFormTitle = adForm.querySelector('#title');
   var adFormAddress = adForm.querySelector('#address');
   var adFormType = adForm.querySelector('#type');
@@ -43,7 +47,9 @@
   var adFormFeatures = adForm.querySelector('.features');
   var adFormDescription = adForm.querySelector('#description');
   var adFormPhotos = adForm.querySelector('#images');
+  var adFormPhotosLabel = adForm.querySelector('.ad-form__drop-zone');
   var adFormResetBtn = adForm.querySelector('.ad-form__reset');
+  var adFormSubmitBtn = adForm.querySelector('.ad-form__submit');
 
   var filterForm = map.querySelector('.map__filters');
   var filterFormType = filterForm.querySelector('#housing-type');
@@ -55,7 +61,8 @@
   var adFormInputs = [
     adFormAvatar, adFormTitle, adFormAddress, adFormType,
     adFormPrice, adFormTimein, adFormTimeout, adFormRooms,
-    adFormCapacity, adFormFeatures, adFormDescription, adFormPhotos
+    adFormCapacity, adFormFeatures, adFormDescription, adFormPhotos,
+    adFormSubmitBtn, adFormResetBtn
   ];
 
   var filterFormInputs = [
@@ -123,13 +130,16 @@
     0: adFormCapacity.querySelector('option[value="0"]')
   };
 
-  var createPins = function () {
+  var createPinsAndCards = function () {
     var ads = generateAdsList(ADS_QUANTITY);
     for (var i = 0; i < ads.length; i++) {
       var newPin = createPin(ads[i]);
       pinsBlock.appendChild(newPin);
+
+      var newCard = createCard(ads[i]);
+      map.insertBefore(newCard, filterContainer);
     }
-    map.insertBefore(createCard(ads[0]), filterContainer);
+    linkPinsWithCards();
   };
 
   var createPin = function (ad) {
@@ -149,6 +159,8 @@
 
   var createCard = function (ad) {
     var newCard = cardTemplate.cloneNode(true);
+    var cardContainer = newCard.querySelector('.map__card');
+    cardContainer.classList.add('hidden');
     newCard.querySelector('.popup__title').textContent = ad.offer.title;
     newCard.querySelector('.popup__text--address').textContent = ad.offer.address;
     newCard.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
@@ -244,6 +256,41 @@
       newPhotos.appendChild(newPhoto);
     }
     return newPhotos;
+  };
+
+  // ============ Открытие карточек по меткам ============
+
+  var linkPinsWithCards = function () {
+    var pins = map.querySelectorAll('.map__pin:not(.map__pin--main');
+    var cards = map.querySelectorAll('.map__card');
+    for (var i = 0; i < pins.length; i++) {
+      (function (pin, card) {
+        pin.addEventListener('click', function () {
+          openCard(cards, card);
+        });
+        card.querySelector('.popup__close').addEventListener('click', function () {
+          card.classList.add('hidden');
+        });
+      })(pins[i], cards[i]);
+    }
+  };
+
+  var openCard = function (cards, card) {
+    var onPopupEscPress = function (ev) {
+      if (ev.key === KEYS.escape) {
+        closeCard();
+      }
+    };
+    var closeCard = function () {
+      card.classList.add('hidden');
+      document.removeEventListener('keydown', onPopupEscPress);
+    };
+
+    for (var j = 0; j < cards.length; j++) {
+      cards[j].classList.add('hidden');
+    }
+    card.classList.remove('hidden');
+    document.addEventListener('keydown', onPopupEscPress);
   };
 
   // ============ Создание псевдоданных ============
@@ -352,12 +399,12 @@
   // ============ Активация карты и работа с формами ============
 
   var onMainPinMousedown = function (ev) {
-    if (ev.button === LEFT_MOUSE_BTN) {
+    if (ev.button === KEYS.leftMouseBtn) {
       activateMap();
     }
   };
   var onMainPinEnterPress = function (ev) {
-    if (ev.key === ENTER_KEY) {
+    if (ev.key === KEYS.enter) {
       activateMap();
     }
   };
@@ -368,7 +415,7 @@
     setDefaultAddressValue('isActive');
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
     mainPin.removeEventListener('keydown', onMainPinEnterPress);
-    createPins();
+    createPinsAndCards();
   };
 
   var disableForms = function () {
@@ -540,11 +587,26 @@
     }
   };
 
+  var checkIfImage = function (input, label) {
+    var extensionRegExp = /.jpg$|.jpeg$|.png$/i;
+    if (input.value && !extensionRegExp.test(input.value)) {
+      markAsInvalid(label);
+      return false;
+    } else {
+      markAsValid(label);
+      return true;
+    }
+  };
+
   var checkFormValidity = function () {
     var isTitleValid = checkInputValidity(adFormTitle);
     var isPriceValid = checkInputValidity(adFormPrice);
+    var isAddressValid = checkInputValidity(adFormAddress);
     var isCapacityValid = checkCapacityValidity();
-    var isFormValid = isTitleValid && isPriceValid && isCapacityValid;
+    var isAvatarValid = checkIfImage(adFormAvatar, adFormAvatarLabel);
+    var isPhotosValid = checkIfImage(adFormPhotos, adFormPhotosLabel);
+    var isFormValid = isTitleValid && isPriceValid && isCapacityValid
+                   && isAddressValid && isAvatarValid && isPhotosValid;
     return isFormValid ? true : false;
   };
 
