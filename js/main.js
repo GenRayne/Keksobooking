@@ -16,20 +16,20 @@
   var MAIN_PIN_HEIGHT = MAIN_PIN_ROUND_SIDE + MAIN_PIN_POINTER_HEIGHT;
   var MAIN_PIN_START_Y = +window.getComputedStyle(mainPin).top.slice(0, -2);
 
+  var ADS_QUANTITY = 8;
+
   var MIN_INT = 1;
   var MAX_ROOMS = 10;
   var MAX_GUESTS = 10;
   var MAX_PRICE = 15000;
   var MAX_PLACES = 100;
 
-  var LEFT_MOUSE_BTN = 0;
-  var ENTER_KEY = 'Enter';
-
   var cardTemplate = document.querySelector('#card').content;
   var filterContainer = map.querySelector('.map__filters-container');
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
+  var adFormAvatarLabel = adForm.querySelector('.ad-form-header__drop-zone');
   var adFormTitle = adForm.querySelector('#title');
   var adFormAddress = adForm.querySelector('#address');
   var adFormType = adForm.querySelector('#type');
@@ -41,7 +41,9 @@
   var adFormFeatures = adForm.querySelector('.features');
   var adFormDescription = adForm.querySelector('#description');
   var adFormPhotos = adForm.querySelector('#images');
+  var adFormPhotosLabel = adForm.querySelector('.ad-form__drop-zone');
   var adFormResetBtn = adForm.querySelector('.ad-form__reset');
+  var adFormSubmitBtn = adForm.querySelector('.ad-form__submit');
 
   var filterForm = map.querySelector('.map__filters');
   var filterFormType = filterForm.querySelector('#housing-type');
@@ -53,7 +55,8 @@
   var adFormInputs = [
     adFormAvatar, adFormTitle, adFormAddress, adFormType,
     adFormPrice, adFormTimein, adFormTimeout, adFormRooms,
-    adFormCapacity, adFormFeatures, adFormDescription, adFormPhotos
+    adFormCapacity, adFormFeatures, adFormDescription, adFormPhotos,
+    adFormSubmitBtn, adFormResetBtn
   ];
 
   var filterFormInputs = [
@@ -88,14 +91,55 @@
     '13:00',
     '14:00'
   ];
+  var HouseTypes = {
+    BUNGALO: {
+      type: 'bungalo',
+      name: 'Бунгало',
+      minPrice: 0,
+      placeholder: '0'
+    },
+    FLAT: {
+      type: 'flat',
+      name: 'Квартира',
+      minPrice: 1000,
+      placeholder: '1000'
+    },
+    HOUSE: {
+      type: 'house',
+      name: 'Дом',
+      minPrice: 5000,
+      placeholder: '5000'
+    },
+    PALACE: {
+      type: 'palace',
+      name: 'Дворец',
+      minPrice: 10000,
+      placeholder: '10000'
+    }
+  };
+  var GuestsOptions = {
+    1: adFormCapacity.querySelector('option[value="1"]'),
+    2: adFormCapacity.querySelector('option[value="2"]'),
+    3: adFormCapacity.querySelector('option[value="3"]'),
+    0: adFormCapacity.querySelector('option[value="0"]')
+  };
 
-  var createPins = function () {
-    var ads = generateAdsList();
+  var Keys = {
+    LEFT_MOUSE_BTN: 0,
+    ENTER: 'Enter',
+    ESCAPE: 'Escape'
+  };
+
+  var createPinsAndCards = function () {
+    var ads = generateAdsList(ADS_QUANTITY);
     for (var i = 0; i < ads.length; i++) {
       var newPin = createPin(ads[i]);
       pinsBlock.appendChild(newPin);
+
+      var newCard = createCard(ads[i]);
+      map.insertBefore(newCard, filterContainer);
     }
-    map.insertBefore(createCard(ads[0]), filterContainer);
+    linkPinsWithCards();
   };
 
   var createPin = function (ad) {
@@ -115,6 +159,8 @@
 
   var createCard = function (ad) {
     var newCard = cardTemplate.cloneNode(true);
+    var cardContainer = newCard.querySelector('.map__card');
+    cardContainer.classList.add('hidden');
     newCard.querySelector('.popup__title').textContent = ad.offer.title;
     newCard.querySelector('.popup__text--address').textContent = ad.offer.address;
     newCard.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
@@ -159,17 +205,17 @@
   var choosePlaceType = function (place) {
     var type;
     switch (place) {
-      case 'flat':
-        type = 'Квартира';
+      case HouseTypes.BUNGALO.type:
+        type = HouseTypes.BUNGALO.name;
         break;
-      case 'bungalo':
-        type = 'Бунгало';
+      case HouseTypes.FLAT.type:
+        type = HouseTypes.FLAT.name;
         break;
-      case 'house':
-        type = 'Дом';
+      case HouseTypes.HOUSE.type:
+        type = HouseTypes.HOUSE.name;
         break;
-      case 'palace':
-        type = 'Дворец';
+      case HouseTypes.PALACE.type:
+        type = HouseTypes.PALACE.name;
     }
     return type;
   };
@@ -212,13 +258,45 @@
     return newPhotos;
   };
 
+  // ============ Открытие карточек по меткам ============
+
+  var linkPinsWithCards = function () {
+    var pins = map.querySelectorAll('.map__pin:not(.map__pin--main');
+    var cards = map.querySelectorAll('.map__card');
+    for (var i = 0; i < pins.length; i++) {
+      (function (pin, card) {
+        pin.addEventListener('click', function () {
+          openCard(cards, card);
+        });
+        card.querySelector('.popup__close').addEventListener('click', function () {
+          card.classList.add('hidden');
+        });
+      })(pins[i], cards[i]);
+    }
+  };
+
+  var openCard = function (cards, card) {
+    var onPopupEscPress = function (ev) {
+      if (ev.key === Keys.ESCAPE) {
+        closeCard();
+      }
+    };
+    var closeCard = function () {
+      card.classList.add('hidden');
+      document.removeEventListener('keydown', onPopupEscPress);
+    };
+
+    for (var j = 0; j < cards.length; j++) {
+      cards[j].classList.add('hidden');
+    }
+    card.classList.remove('hidden');
+    document.addEventListener('keydown', onPopupEscPress);
+  };
+
   // ============ Создание псевдоданных ============
 
   var generateAdsList = function (quantity) {
     var ads = [];
-    if (!quantity) {
-      quantity = 8;
-    }
     for (var i = 1; i <= quantity; i++) {
       var newAd = generateNewAd(i);
       ads.push(newAd);
@@ -258,17 +336,17 @@
   var getPrice = function (type) {
     var minPrice;
     switch (type) {
-      case 'bungalo':
-        minPrice = 0;
+      case HouseTypes.BUNGALO.type:
+        minPrice = HouseTypes.BUNGALO.minPrice;
         break;
-      case 'flat':
-        minPrice = 1000;
+      case HouseTypes.FLAT.type:
+        minPrice = HouseTypes.FLAT.minPrice;
         break;
-      case 'house':
-        minPrice = 5000;
+      case HouseTypes.HOUSE.type:
+        minPrice = HouseTypes.HOUSE.minPrice;
         break;
-      case 'palace':
-        minPrice = 10000;
+      case HouseTypes.PALACE.type:
+        minPrice = HouseTypes.PALACE.minPrice;
     }
     return getRandomInt(MAX_PRICE, minPrice);
   };
@@ -321,12 +399,12 @@
   // ============ Активация карты и работа с формами ============
 
   var onMainPinMousedown = function (ev) {
-    if (ev.button === LEFT_MOUSE_BTN) {
+    if (ev.button === Keys.LEFT_MOUSE_BTN) {
       activateMap();
     }
   };
   var onMainPinEnterPress = function (ev) {
-    if (ev.key === ENTER_KEY) {
+    if (ev.key === Keys.ENTER) {
       activateMap();
     }
   };
@@ -337,7 +415,7 @@
     setDefaultAddressValue('isActive');
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
     mainPin.removeEventListener('keydown', onMainPinEnterPress);
-    createPins();
+    createPinsAndCards();
   };
 
   var disableForms = function () {
@@ -397,20 +475,32 @@
     switch (adFormRooms.value) {
       case '1':
         changeCapacityOptionsState('disabled');
-        adFormCapacity.children[2].disabled = false;
+        GuestsOptions[1].disabled = false;
+        if (adFormCapacity.value !== '1') {
+          adFormCapacity.value = '1';
+        }
         break;
       case '2':
         changeCapacityOptionsState('disabled');
-        adFormCapacity.children[1].disabled = false;
-        adFormCapacity.children[2].disabled = false;
+        GuestsOptions[1].disabled = false;
+        GuestsOptions[2].disabled = false;
+        if (adFormCapacity.value !== '1' && adFormCapacity.value !== '2') {
+          adFormCapacity.value = '2';
+        }
         break;
       case '3':
         changeCapacityOptionsState(false);
-        adFormCapacity.children[3].disabled = true;
+        GuestsOptions[0].disabled = true;
+        if (adFormCapacity.value === '0') {
+          adFormCapacity.value = '3';
+        }
         break;
       case '100':
         changeCapacityOptionsState('disabled');
-        adFormCapacity.children[3].disabled = false;
+        GuestsOptions[0].disabled = false;
+        if (adFormCapacity.value !== '0') {
+          adFormCapacity.value = '0';
+        }
     }
   };
 
@@ -430,21 +520,21 @@
 
   var setMinPrice = function (type) {
     switch (type) {
-      case 'bungalo':
-        adFormPrice.min = 0;
-        adFormPrice.placeholder = '0';
+      case HouseTypes.BUNGALO.type:
+        adFormPrice.min = HouseTypes.BUNGALO.minPrice;
+        adFormPrice.placeholder = HouseTypes.BUNGALO.placeholder;
         break;
-      case 'flat':
-        adFormPrice.min = 1000;
-        adFormPrice.placeholder = '1000';
+      case HouseTypes.FLAT.type:
+        adFormPrice.min = HouseTypes.FLAT.minPrice;
+        adFormPrice.placeholder = HouseTypes.FLAT.placeholder;
         break;
-      case 'house':
-        adFormPrice.min = 5000;
-        adFormPrice.placeholder = '5000';
+      case HouseTypes.HOUSE.type:
+        adFormPrice.min = HouseTypes.HOUSE.minPrice;
+        adFormPrice.placeholder = HouseTypes.HOUSE.placeholder;
         break;
-      case 'palace':
-        adFormPrice.min = 10000;
-        adFormPrice.placeholder = '10000';
+      case HouseTypes.PALACE.type:
+        adFormPrice.min = HouseTypes.PALACE.minPrice;
+        adFormPrice.placeholder = HouseTypes.PALACE.placeholder;
     }
   };
 
@@ -463,7 +553,6 @@
       case '1':
         if (adFormCapacity.value !== '1') {
           markAsInvalid(adFormCapacity);
-          adFormCapacity.setCustomValidity = 'Ай';
           return false;
         } else {
           markAsValid(adFormCapacity);
@@ -472,7 +561,6 @@
       case '2':
         if (adFormCapacity.value !== '1' || adFormCapacity.value !== '2') {
           markAsInvalid(adFormCapacity);
-          adFormCapacity.setCustomValidity = 'Ай';
           return false;
         } else {
           markAsValid(adFormCapacity);
@@ -484,13 +572,11 @@
           return true;
         } else {
           markAsInvalid(adFormCapacity);
-          adFormCapacity.setCustomValidity = 'Ай';
           return false;
         }
       case '100':
         if (adFormCapacity.value !== '0') {
           markAsInvalid(adFormCapacity);
-          adFormCapacity.setCustomValidity = 'Ай';
           return false;
         } else {
           markAsValid(adFormCapacity);
@@ -501,11 +587,26 @@
     }
   };
 
+  var checkIfImage = function (input, label) {
+    var extensionRegExp = /.jpg$|.jpeg$|.png$/i;
+    if (input.value && !extensionRegExp.test(input.value)) {
+      markAsInvalid(label);
+      return false;
+    } else {
+      markAsValid(label);
+      return true;
+    }
+  };
+
   var checkFormValidity = function () {
     var isTitleValid = checkInputValidity(adFormTitle);
     var isPriceValid = checkInputValidity(adFormPrice);
+    var isAddressValid = checkInputValidity(adFormAddress);
     var isCapacityValid = checkCapacityValidity();
-    var isFormValid = isTitleValid && isPriceValid && isCapacityValid;
+    var isAvatarValid = checkIfImage(adFormAvatar, adFormAvatarLabel);
+    var isPhotosValid = checkIfImage(adFormPhotos, adFormPhotosLabel);
+    var isFormValid = isTitleValid && isPriceValid && isCapacityValid
+                   && isAddressValid && isAvatarValid && isPhotosValid;
     return isFormValid ? true : false;
   };
 
