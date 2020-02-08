@@ -143,7 +143,7 @@
   // --------------------- Обработчики ---------------------
 
   var onAdTypeChange = function () {
-    setMinPrice(adFormType.value);
+    setMinPrice();
   };
 
   var onTimeoutChange = function () {
@@ -191,6 +191,8 @@
   };
 
   var onAdFormSubmit = function (ev) {
+    adFormTitle.removeEventListener('input', onTitleInput);
+    adFormPrice.removeEventListener('input', onPriceInput);
     if (!checkFormValidity()) {
       ev.preventDefault();
     }
@@ -204,8 +206,8 @@
     }
   };
 
-  var setMinPrice = function (type) {
-    switch (type) {
+  var setMinPrice = function () {
+    switch (adFormType.value) {
       case HouseTypes.BUNGALO.type:
         adFormPrice.min = HouseTypes.BUNGALO.minPrice;
         adFormPrice.placeholder = HouseTypes.BUNGALO.placeholder;
@@ -250,7 +252,6 @@
       adFormTitle.addEventListener('input', onTitleInput);
       return false;
     }
-    adFormTitle.removeEventListener('input', onTitleInput);
     invalidTitleMessageBox.classList.add('hidden');
     markAsValid(adFormTitle);
     return true;
@@ -273,7 +274,6 @@
       adFormPrice.addEventListener('input', onPriceInput);
       return false;
     }
-    adFormPrice.removeEventListener('input', onPriceInput);
     invalidPriceMessageBox.classList.add('hidden');
     markAsValid(adFormPrice);
     return true;

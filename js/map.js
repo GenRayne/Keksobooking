@@ -187,7 +187,7 @@
   // ================== Открытие карточек по меткам ==================
 
   var linkPinsWithCards = function () {
-    var pins = map.querySelectorAll('.map__pin:not(.map__pin--main');
+    var pins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
     var cards = map.querySelectorAll('.map__card');
     for (var i = 0; i < pins.length; i++) {
       (function (pin, card) {
