@@ -9,8 +9,6 @@
   var MIN_LOCATION_Y = 130;
   var MAX_LOCATION_Y = 630;
 
-  var ErrorTexts = window.ErrorTexts;
-
   var PHOTO_URLS = [
     'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
@@ -110,6 +108,20 @@
       option: adFormCapacity.querySelector('option[value="0"]')
     }
   };
+
+  var ErrorTexts = {
+    TYPE: 'Неверный тип жилья.',
+    ROOMS: 'Неверное количество комнат.',
+    GUESTS: 'Неверное количество гостей.',
+    INVALID: {
+      empty: 'Это поле обязательно для заполнения.',
+      titleLength: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
+      priceMin: 'Цена для выбранного типа жилья не может быть ниже ',
+      priceMax: 'Цена для выбранного типа жилья не может быть выше 1 000 000.'
+    }
+  };
+
+  // =================================================================
 
   var generateAdsList = function (quantity) {
     var ads = [];
@@ -222,11 +234,17 @@
     return arr[getRandomInt(arr.length - 1)];
   };
 
-  window.getRandomInt = getRandomInt;
-  window.getRandomFromArr = getRandomFromArr;
-  window.HouseTypes = HouseTypes;
-  window.Rooms = Rooms;
-  window.Guests = Guests;
-  window.generateAdsList = generateAdsList;
-  window.MAP_WIDTH = MAP_WIDTH;
+  // =================================================================
+  // Экспорт:
+
+  window.data = {
+    getRandomInt: getRandomInt,
+    getRandomFromArr: getRandomFromArr,
+    HouseTypes: HouseTypes,
+    Rooms: Rooms,
+    Guests: Guests,
+    generateAdsList: generateAdsList,
+    ErrorTexts: ErrorTexts,
+    MAP_WIDTH: MAP_WIDTH
+  };
 })();

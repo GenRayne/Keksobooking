@@ -1,18 +1,24 @@
 'use strict';
 
 (function () {
+  // --------------------- Импорт ---------------------
+
+  var mainPin = window.map.mainPin;
+  var Pin = window.map.Pin;
+  var Keys = window.map.Keys;
+  var createPins = window.map.createPins;
+
+  var HouseTypes = window.data.HouseTypes;
+  var Rooms = window.data.Rooms;
+  var Guests = window.data.Guests;
+  var ErrorTexts = window.data.ErrorTexts;
+
+  // ---------------- Переменные формы ----------------
+
   var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
 
   var MAP_WIDTH = window.MAP_WIDTH;
-
-  var mainPin = window.mainPin;
-  var Pin = window.Pin;
-  var Keys = window.Keys;
-  var HouseTypes = window.HouseTypes;
-  var Rooms = window.Rooms;
-  var Guests = window.Guests;
-  var createPinsAndCards = window.createPinsAndCards;
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -66,18 +72,6 @@
     filterFormFeatures
   ];
 
-  var ErrorTexts = {
-    TYPE: 'Неверный тип жилья.',
-    ROOMS: 'Неверное количество комнат.',
-    GUESTS: 'Неверное количество гостей.',
-    INVALID: {
-      empty: 'Это поле обязательно для заполнения.',
-      titleLength: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
-      priceMin: 'Цена для выбранного типа жилья не может быть ниже ',
-      priceMax: 'Цена для выбранного типа жилья не может быть выше 1 000 000.'
-    }
-  };
-
   // ============== Активация карты и работа с формами ==============
 
   var onMainPinMousedown = function (ev) {
@@ -97,7 +91,7 @@
     setDefaultAddressValue(true);
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
     mainPin.removeEventListener('keydown', onMainPinEnterPress);
-    createPinsAndCards();
+    createPins();
   };
 
   var disableForms = function () {
@@ -312,7 +306,7 @@
     input.style.boxShadow = '';
   };
 
-  // =========================================================================
+  // =================================================================
 
   disableForms();
   onRoomsChange();
