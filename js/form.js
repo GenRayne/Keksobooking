@@ -12,13 +12,13 @@
   var Rooms = window.data.Rooms;
   var Guests = window.data.Guests;
   var ErrorTexts = window.data.ErrorTexts;
+  var MAP_WIDTH = window.data.MAP_WIDTH;
 
   // ---------------- Переменные формы ----------------
 
   var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
 
-  var MAP_WIDTH = window.MAP_WIDTH;
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -123,13 +123,15 @@
 
   var clearMap = function () {
     var pins = pinsBlock.querySelectorAll('.map__pin');
+    var cards = map.querySelectorAll('.map__card.popup');
     for (var i = 0; i < pins.length; i++) {
       if (!pins[i].classList.contains('map__pin--main')) {
         pinsBlock.removeChild(pins[i]);
       }
+      if (cards[i]) {
+        map.removeChild(cards[i]);
+      }
     }
-    var card = map.querySelector('.map__card.popup');
-    map.removeChild(card);
   };
 
   // ======================= Валидация формы =======================
