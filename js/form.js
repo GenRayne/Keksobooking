@@ -18,7 +18,7 @@
 
   var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
-
+  var imageRegExp = /.jpg$|.jpeg$|.png$/i;
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -283,8 +283,7 @@
   };
 
   var checkIfImage = function (input, label) {
-    var imageRegExp = /.jpg$|.jpeg$|.png$/i;
-    if (input.value && !imageRegExp.test(input.value)) {
+    if (input.value && !input.value.match(imageRegExp)) {
       markAsInvalid(label);
       return false;
     }
