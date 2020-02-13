@@ -2,7 +2,7 @@
 
 (function () {
   var map = document.querySelector('.map');
-  var MAP_WIDTH = +window.getComputedStyle(map).width.slice(0, -2);
+  var MAP_WIDTH = map.offsetWidth;
   var MIN_INT = 1;
   var MAX_PRICE = 15000;
   var MAX_PLACES = 100;
@@ -43,82 +43,58 @@
   var adFormCapacity = adForm.querySelector('#capacity');
 
   var HouseTypes = {
-    BUNGALO: {
-      type: 'bungalo',
-      name: 'Бунгало',
-      minPrice: 0,
-      placeholder: '0'
-    },
-    FLAT: {
-      type: 'flat',
-      name: 'Квартира',
-      minPrice: 1000,
-      placeholder: '1000'
-    },
-    HOUSE: {
-      type: 'house',
-      name: 'Дом',
-      minPrice: 5000,
-      placeholder: '5000'
-    },
-    PALACE: {
-      type: 'palace',
-      name: 'Дворец',
-      minPrice: 10000,
-      placeholder: '10000'
-    }
+    BUNGALO: 'bungalo',
+    FLAT: 'flat',
+    HOUSE: 'house',
+    PALACE: 'palace'
+  };
+  var HouseNames = {
+    BUNGALO: 'Бунгало',
+    FLAT: 'Квартира',
+    HOUSE: 'Дом',
+    PALACE: 'Дворец'
+  };
+  var HouseMinPrices = {
+    BUNGALO: 0,
+    FLAT: 1000,
+    HOUSE: 5000,
+    PALACE: 10000
+  };
+  var HousePlaceholders = {
+    BUNGALO: '0',
+    FLAT: '1000',
+    HOUSE: '5000',
+    PALACE: '10000'
   };
   var Rooms = {
-    1: {
-      amount: '1',
-      text: '1 комната'
-    },
-    2: {
-      amount: '2',
-      text: '2 комнаты'
-    },
-    3: {
-      amount: '3',
-      text: '3 комнаты'
-    },
-    100: {
-      amount: '100',
-      text: '100 комнат'
-    }
+    1: '1',
+    2: '2',
+    3: '3',
+    100: '100'
   };
   var Guests = {
-    1: {
-      amount: '1',
-      text: 'для 1 гостя',
-      option: adFormCapacity.querySelector('option[value="1"]')
-    },
-    2: {
-      amount: '2',
-      text: 'для 2 гостей',
-      option: adFormCapacity.querySelector('option[value="2"]')
-    },
-    3: {
-      amount: '3',
-      text: 'для 3 гостей',
-      option: adFormCapacity.querySelector('option[value="3"]')
-    },
-    0: {
-      amount: '0',
-      text: 'не для гостей',
-      option: adFormCapacity.querySelector('option[value="0"]')
-    }
+    1: '1',
+    2: '2',
+    3: '3',
+    0: '0'
+  };
+  var GuestsOptions = {
+    1: adFormCapacity.querySelector('option[value="1"]'),
+    2: adFormCapacity.querySelector('option[value="2"]'),
+    3: adFormCapacity.querySelector('option[value="3"]'),
+    0: adFormCapacity.querySelector('option[value="0"]')
   };
 
   var ErrorTexts = {
     TYPE: 'Неверный тип жилья.',
     ROOMS: 'Неверное количество комнат.',
-    GUESTS: 'Неверное количество гостей.',
-    INVALID: {
-      empty: 'Это поле обязательно для заполнения.',
-      titleLength: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
-      priceMin: 'Цена для выбранного типа жилья не может быть ниже ',
-      priceMax: 'Цена для выбранного типа жилья не может быть выше 1 000 000.'
-    }
+    GUESTS: 'Неверное количество гостей.'
+  };
+  var InvalidTexts = {
+    EMPTY: 'Это поле обязательно для заполнения.',
+    TITLE_LENGTH: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
+    PRICE_MIN: 'Цена для выбранного типа жилья не может быть ниже ',
+    PRICE_MAX: 'Цена для выбранного типа жилья не может быть выше 1 000 000.'
   };
 
   // =================================================================
@@ -241,10 +217,15 @@
     getRandomInt: getRandomInt,
     getRandomFromArr: getRandomFromArr,
     HouseTypes: HouseTypes,
+    HouseNames: HouseNames,
+    HouseMinPrices: HouseMinPrices,
+    HousePlaceholders: HousePlaceholders,
     Rooms: Rooms,
     Guests: Guests,
+    GuestsOptions: GuestsOptions,
     generateAdsList: generateAdsList,
     ErrorTexts: ErrorTexts,
+    InvalidTexts: InvalidTexts,
     MAP_WIDTH: MAP_WIDTH
   };
 })();
