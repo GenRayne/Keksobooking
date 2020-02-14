@@ -1,17 +1,17 @@
 'use strict';
 
 (function () {
-  var REQUEST_TIMEOUT = 10000;
-  var REQUEST_URL = 'https://js.dump.academy/keksobooking/data';
-  var RequestStates = {
-    LOAD: 4,
+  var Request = {
+    TIMEOUT: 10000,
+    URL: 'https://js.dump.academy/keksobooking/data',
+    READY_STATE_LOAD: 4,
     OK_STATUS: 200
   };
   var RequestErrorTexts = {
     ERROR: 'Ошибка соединения. Проверьте подключение к сети.',
     TIMEOUT: 'Время ожидания выполнения запроса превышено.'
   };
-  var ads = '';
+  var ads = [];
   var requestMessage = '';
 
   var requestData = function () {
@@ -25,13 +25,10 @@
     };
 
     xhr.addEventListener('load', function () {
-      switch (xhr.status) {
-        case RequestStates.LOAD:
-        case RequestStates.OK_STATUS:
-          onSuccess(xhr.response);
-          break;
-        default:
-          onError('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
+      if (Request.READY_STATE_LOAD && Request.OK_STATUS) {
+        onSuccess(xhr.response);
+      } else {
+        onError('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
@@ -44,8 +41,8 @@
     });
 
     xhr.responseType = 'json';
-    xhr.timeout = REQUEST_TIMEOUT;
-    xhr.open('GET', REQUEST_URL);
+    xhr.timeout = Request.TIMEOUT;
+    xhr.open('GET', Request.URL);
     xhr.send();
 
     var request = {
