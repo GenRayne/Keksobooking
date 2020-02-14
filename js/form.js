@@ -3,16 +3,22 @@
 (function () {
   // --------------------- Импорт ---------------------
 
-  var mainPin = window.map.mainPin;
-  var Pin = window.map.Pin;
-  var Keys = window.map.Keys;
-  var createPins = window.map.createPins;
+  var MainPin = window.pins.MainPin;
+  var mainPinEl = window.pins.mainPinEl;
+  var Keys = window.pins.Keys;
+  var createPins = window.pins.createPins;
 
   var HouseTypes = window.data.HouseTypes;
+  var HouseMinPrices = window.data.HouseMinPrices;
+  var HousePlaceholders = window.data.HousePlaceholders;
   var Rooms = window.data.Rooms;
   var Guests = window.data.Guests;
+  var GuestsOptions = window.data.GuestsOptions;
   var ErrorTexts = window.data.ErrorTexts;
+  var InvalidTexts = window.data.InvalidTexts;
   var MAP_WIDTH = window.data.MAP_WIDTH;
+
+  var requestData = window.request.requestData;
 
   // ---------------- Переменные формы ----------------
 
@@ -89,9 +95,9 @@
     map.classList.remove('map--faded');
     enableForms();
     setDefaultAddressValue(true);
-    mainPin.removeEventListener('mousedown', onMainPinMousedown);
-    mainPin.removeEventListener('keydown', onMainPinEnterPress);
-    createPins();
+    mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
+    mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
+    createPins(requestData().ads);
   };
 
   var disableForms = function () {
@@ -99,8 +105,8 @@
     changeInputsState(adFormInputs, true);
     changeInputsState(filterFormInputs, true);
     setDefaultAddressValue();
-    mainPin.addEventListener('mousedown', onMainPinMousedown);
-    mainPin.addEventListener('keydown', onMainPinEnterPress);
+    mainPinEl.addEventListener('mousedown', onMainPinMousedown);
+    mainPinEl.addEventListener('keydown', onMainPinEnterPress);
   };
   var enableForms = function () {
     adForm.classList.remove('ad-form--disabled');
@@ -116,8 +122,8 @@
   };
 
   var setDefaultAddressValue = function (isActive) {
-    var pointerPinCoords = (MAP_WIDTH / 2) + ', ' + (Pin.main.START_Y + Pin.main.HEIGHT);
-    var centerPinCoords = (MAP_WIDTH / 2) + ', ' + (Pin.main.START_Y + Pin.main.ROUND_SIDE / 2);
+    var pointerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.HEIGHT);
+    var centerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.ROUND_SIDE / 2);
     adFormAddress.value = isActive ? pointerPinCoords : centerPinCoords;
   };
 
@@ -151,34 +157,34 @@
 
   var onRoomsChange = function () {
     switch (adFormRooms.value) {
-      case Rooms[1].amount:
+      case Rooms[1]:
         changeCapacityOptionsState(true);
-        Guests[1].option.disabled = false;
-        if (adFormCapacity.value !== Guests[1].amount) {
-          adFormCapacity.value = Guests[1].amount;
+        GuestsOptions[1].disabled = false;
+        if (adFormCapacity.value !== Guests[1]) {
+          adFormCapacity.value = Guests[1];
         }
         break;
-      case Rooms[2].amount:
+      case Rooms[2]:
         changeCapacityOptionsState(true);
-        Guests[1].option.disabled = false;
-        Guests[2].option.disabled = false;
-        if (adFormCapacity.value !== Guests[1].amount
-            && adFormCapacity.value !== Guests[2].amount) {
-          adFormCapacity.value = Guests[2].amount;
+        GuestsOptions[1].disabled = false;
+        GuestsOptions[2].disabled = false;
+        if (adFormCapacity.value !== Guests[1]
+            && adFormCapacity.value !== Guests[2]) {
+          adFormCapacity.value = Guests[2];
         }
         break;
-      case Rooms[3].amount:
+      case Rooms[3]:
         changeCapacityOptionsState(false);
-        Guests[0].option.disabled = true;
-        if (adFormCapacity.value === Guests[0].amount) {
-          adFormCapacity.value = Guests[3].amount;
+        GuestsOptions[0].disabled = true;
+        if (adFormCapacity.value === Guests[0]) {
+          adFormCapacity.value = Guests[3];
         }
         break;
-      case Rooms[100].amount:
+      case Rooms[100]:
         changeCapacityOptionsState(true);
-        Guests[0].option.disabled = false;
-        if (adFormCapacity.value !== Guests[0].amount) {
-          adFormCapacity.value = Guests[0].amount;
+        GuestsOptions[0].disabled = false;
+        if (adFormCapacity.value !== Guests[0]) {
+          adFormCapacity.value = Guests[0];
         }
         break;
       default:
@@ -204,21 +210,21 @@
 
   var setMinPrice = function () {
     switch (adFormType.value) {
-      case HouseTypes.BUNGALO.type:
-        adFormPrice.min = HouseTypes.BUNGALO.minPrice;
-        adFormPrice.placeholder = HouseTypes.BUNGALO.placeholder;
+      case HouseTypes.BUNGALO:
+        adFormPrice.min = HouseMinPrices.BUNGALO;
+        adFormPrice.placeholder = HousePlaceholders.BUNGALO;
         break;
-      case HouseTypes.FLAT.type:
-        adFormPrice.min = HouseTypes.FLAT.minPrice;
-        adFormPrice.placeholder = HouseTypes.FLAT.placeholder;
+      case HouseTypes.FLAT:
+        adFormPrice.min = HouseMinPrices.FLAT;
+        adFormPrice.placeholder = HousePlaceholders.FLAT;
         break;
-      case HouseTypes.HOUSE.type:
-        adFormPrice.min = HouseTypes.HOUSE.minPrice;
-        adFormPrice.placeholder = HouseTypes.HOUSE.placeholder;
+      case HouseTypes.HOUSE:
+        adFormPrice.min = HouseMinPrices.HOUSE;
+        adFormPrice.placeholder = HousePlaceholders.HOUSE;
         break;
-      case HouseTypes.PALACE.type:
-        adFormPrice.min = HouseTypes.PALACE.minPrice;
-        adFormPrice.placeholder = HouseTypes.PALACE.placeholder;
+      case HouseTypes.PALACE:
+        adFormPrice.min = HouseMinPrices.PALACE;
+        adFormPrice.placeholder = HousePlaceholders.PALACE;
         break;
       default:
         throw new Error(ErrorTexts.TYPE);
@@ -241,9 +247,9 @@
       invalidTitleMessageBox.classList.remove('hidden');
 
       if (adFormTitle.validity.valueMissing) {
-        invalidTitleMessageBox.textContent = ErrorTexts.INVALID.empty;
+        invalidTitleMessageBox.textContent = InvalidTexts.EMPTY;
       } else if (adFormTitle.validity.tooShort || adFormTitle.validity.tooLong) {
-        invalidTitleMessageBox.textContent = ErrorTexts.INVALID.titleLength;
+        invalidTitleMessageBox.textContent = InvalidTexts.TITLE_LENGTH;
       }
       adFormTitle.addEventListener('input', onTitleInput);
       return false;
@@ -259,13 +265,13 @@
       invalidPriceMessageBox.classList.remove('hidden');
 
       if (adFormPrice.validity.valueMissing) {
-        invalidPriceMessageBox.textContent = ErrorTexts.INVALID.empty;
+        invalidPriceMessageBox.textContent = InvalidTexts.EMPTY;
       } else if (adFormPrice.validity.rangeUnderflow) {
         invalidPriceMessageBox.textContent =
-          ErrorTexts.INVALID.priceMin + setMinPrice() + '.';
+          InvalidTexts.PRICE_MIN + setMinPrice() + '.';
       } else if (adFormPrice.validity.rangeOverflow) {
         invalidPriceMessageBox.textContent =
-          ErrorTexts.INVALID.priceMax;
+          InvalidTexts.PRICE_MAX;
       }
       adFormPrice.addEventListener('input', onPriceInput);
       return false;

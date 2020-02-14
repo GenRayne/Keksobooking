@@ -3,17 +3,20 @@
 (function () {
   // --------------------- Импорт ---------------------
   var HouseTypes = window.data.HouseTypes;
-  var Rooms = window.data.Rooms;
-  var Guests = window.data.Guests;
+  var HouseNames = window.data.HouseNames;
   var ErrorTexts = window.data.ErrorTexts;
 
   // ---------------- Переменные формы ----------------
+  var SINGULAR_AMOUNT = 1;
+  var singularDeclAmounts = {MIN: 1, MAX: 5};
+  var PLURAL_1 = 11;
+
   var cardTemplate = document.querySelector('#card').content;
+  var cardContainer = cardTemplate.querySelector('.map__card');
 
   // ======================= Создание карточки =======================
 
   var createCard = function (ad) {
-    var cardContainer = cardTemplate.querySelector('.map__card');
     var newCard = cardContainer.cloneNode(true);
     newCard.querySelector('.popup__title').textContent = ad.offer.title;
     newCard.querySelector('.popup__text--address').textContent = ad.offer.address;
@@ -42,9 +45,9 @@
     }
 
     var photos = newCard.querySelector('.popup__photos');
+    var photo = photos.querySelector('.popup__photo');
+    photos.innerHTML = '';
     if (ad.offer.photos.length) {
-      var photo = photos.querySelector('.popup__photo');
-      photos.innerHTML = '';
       photos.appendChild(createPhotoList(ad.offer.photos, photo));
     } else {
       photos.classList.add('hidden');
@@ -59,17 +62,17 @@
   var choosePlaceType = function (place) {
     var type;
     switch (place) {
-      case HouseTypes.BUNGALO.type:
-        type = HouseTypes.BUNGALO.name;
+      case HouseTypes.BUNGALO:
+        type = HouseNames.BUNGALO;
         break;
-      case HouseTypes.FLAT.type:
-        type = HouseTypes.FLAT.name;
+      case HouseTypes.FLAT:
+        type = HouseNames.FLAT;
         break;
-      case HouseTypes.HOUSE.type:
-        type = HouseTypes.HOUSE.name;
+      case HouseTypes.HOUSE:
+        type = HouseNames.HOUSE;
         break;
-      case HouseTypes.PALACE.type:
-        type = HouseTypes.PALACE.name;
+      case HouseTypes.PALACE:
+        type = HouseNames.PALACE;
         break;
       default:
         throw new Error(ErrorTexts.TYPE);
@@ -78,39 +81,22 @@
   };
 
   var formCapacityText = function (roomsQuantity, guestsQuantity) {
-    var text = '';
-    switch (roomsQuantity) {
-      case +Rooms[1].amount:
-        text = Rooms[1].text;
-        break;
-      case +Rooms[2].amount:
-        text = Rooms[2].text;
-        break;
-      case +Rooms[3].amount:
-        text = Rooms[3].text;
-        break;
-      case +Rooms[100].amount:
-        text = Rooms[100].text;
-        break;
-      default:
-        text = ErrorTexts.ROOMS;
-    }
+    var text = roomsQuantity;
 
-    switch (guestsQuantity) {
-      case +Guests[1].amount:
-        text += ' ' + Guests[1].text;
-        break;
-      case +Guests[2].amount:
-        text += ' ' + Guests[2].text;
-        break;
-      case +Guests[3].amount:
-        text += ' ' + Guests[3].text;
-        break;
-      case +Guests[0].amount:
-        text += ' ' + Guests[0].text;
-        break;
-      default:
-        text += ' ' + ErrorTexts.GUESTS;
+    if (roomsQuantity === SINGULAR_AMOUNT) {
+      text += ' комната ';
+    } else if (roomsQuantity.toString().slice(-1) > singularDeclAmounts.MIN &&
+               roomsQuantity.toString().slice(-1) < singularDeclAmounts.MAX) {
+      text += ' комнаты ';
+    } else {
+      text += ' комнат ';
+    }
+    if (guestsQuantity === SINGULAR_AMOUNT || (guestsQuantity > PLURAL_1 &&
+        guestsQuantity.toString().slice(-1) === SINGULAR_AMOUNT &&
+        guestsQuantity.toString().slice(-2) !== PLURAL_1)) {
+      text += 'для ' + guestsQuantity + ' гостя';
+    } else {
+      text += 'для ' + guestsQuantity + ' гостей';
     }
     return text;
   };

@@ -2,26 +2,25 @@
 
 (function () {
   // --------------------- Импорт ---------------------
-  var generateAdsList = window.data.generateAdsList;
   var createCard = window.card.createCard;
 
   // ---------------- Переменные формы ----------------
-  var ADS_QUANTITY = 8;
 
   var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
-  var mainPin = document.querySelector('.map__pin--main');
+  var mainPinEl = document.querySelector('.map__pin--main');
   var pinTemplate = document.querySelector('#pin').content;
+  var pinButton = pinTemplate.querySelector('.map__pin');
   var filterContainer = map.querySelector('.map__filters-container');
 
   var Pin = {
     WIDTH: 50,
     HEIGHT: 70,
-    main: {
-      ROUND_SIDE: 62,
-      HEIGHT: 84,
-      START_Y: parseInt(window.getComputedStyle(mainPin).top, 10)
-    }
+  };
+  var MainPin = {
+    ROUND_SIDE: 62,
+    HEIGHT: 84,
+    START_Y: parseInt(window.getComputedStyle(mainPinEl).top, 10)
   };
   var Keys = {
     LEFT_MOUSE_BTN: 0,
@@ -33,7 +32,7 @@
 
   // =================================================================
 
-  var createPins = function () {
+  var createPins = function (adObjects) {
     for (var i = 0; i < adObjects.length; i++) {
       var newPin = createPin(adObjects[i]);
       pinsBlock.appendChild(newPin);
@@ -48,11 +47,10 @@
   };
 
   var createPin = function (ad) {
-    var pinButton = pinTemplate.querySelector('.map__pin');
     var newPin = pinButton.cloneNode(true);
 
     newPin.style = 'left: ' + (ad.location.x - Pin.WIDTH / 2) +
-                      'px; top: ' + (ad.location.y - Pin.HEIGHT) + 'px;';
+                   'px; top: ' + (ad.location.y - Pin.HEIGHT) + 'px;';
     var pinImg = newPin.querySelector('img');
     pinImg.src = ad.author.avatar;
     pinImg.alt = ad.offer.title;
@@ -108,15 +106,12 @@
   };
 
   // =================================================================
-
-  var adObjects = generateAdsList(ADS_QUANTITY);
-
-  // =================================================================
   // Экспорт:
 
-  window.map = {
-    mainPin: mainPin,
+  window.pins = {
+    mainPinEl: mainPinEl,
     Pin: Pin,
+    MainPin: MainPin,
     Keys: Keys,
     createPins: createPins
   };
