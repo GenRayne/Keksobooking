@@ -2,9 +2,9 @@
 
 (function () {
   // --------------------- Импорт ---------------------
-  var HouseTypes = window.data.HouseTypes;
-  var HouseNames = window.data.HouseNames;
-  var ErrorTexts = window.data.ErrorTexts;
+  var HouseType = window.data.HouseType;
+  var HouseName = window.data.HouseName;
+  var ErrorText = window.data.ErrorText;
 
   // ---------------- Переменные формы ----------------
   var SINGULAR_AMOUNT = 1;
@@ -62,20 +62,20 @@
   var choosePlaceType = function (place) {
     var type;
     switch (place) {
-      case HouseTypes.BUNGALO:
-        type = HouseNames.BUNGALO;
+      case HouseType.BUNGALO:
+        type = HouseName.BUNGALO;
         break;
-      case HouseTypes.FLAT:
-        type = HouseNames.FLAT;
+      case HouseType.FLAT:
+        type = HouseName.FLAT;
         break;
-      case HouseTypes.HOUSE:
-        type = HouseNames.HOUSE;
+      case HouseType.HOUSE:
+        type = HouseName.HOUSE;
         break;
-      case HouseTypes.PALACE:
-        type = HouseNames.PALACE;
+      case HouseType.PALACE:
+        type = HouseName.PALACE;
         break;
       default:
-        throw new Error(ErrorTexts.TYPE);
+        throw new Error(ErrorText.TYPE);
     }
     return type;
   };

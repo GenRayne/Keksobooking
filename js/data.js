@@ -42,55 +42,55 @@
   var adForm = document.querySelector('.ad-form');
   var adFormCapacity = adForm.querySelector('#capacity');
 
-  var HouseTypes = {
+  var HouseType = {
     BUNGALO: 'bungalo',
     FLAT: 'flat',
     HOUSE: 'house',
     PALACE: 'palace'
   };
-  var HouseNames = {
+  var HouseName = {
     BUNGALO: 'Бунгало',
     FLAT: 'Квартира',
     HOUSE: 'Дом',
     PALACE: 'Дворец'
   };
-  var HouseMinPrices = {
+  var HouseMinPrice = {
     BUNGALO: 0,
     FLAT: 1000,
     HOUSE: 5000,
     PALACE: 10000
   };
-  var HousePlaceholders = {
-    BUNGALO: '0',
-    FLAT: '1000',
-    HOUSE: '5000',
-    PALACE: '10000'
+  var HousePlaceholder = {
+    BUNGALO: HouseMinPrice.BUNGALO.toString(),
+    FLAT: HouseMinPrice.FLAT.toString(),
+    HOUSE: HouseMinPrice.HOUSE.toString(),
+    PALACE: HouseMinPrice.PALACE.toString()
   };
-  var Rooms = {
+  var RoomsAmount = {
     1: '1',
     2: '2',
     3: '3',
     100: '100'
   };
-  var Guests = {
+  var GuestsAmount = {
     1: '1',
     2: '2',
     3: '3',
     0: '0'
   };
-  var GuestsOptions = {
+  var GuestsOption = {
     1: adFormCapacity.querySelector('option[value="1"]'),
     2: adFormCapacity.querySelector('option[value="2"]'),
     3: adFormCapacity.querySelector('option[value="3"]'),
     0: adFormCapacity.querySelector('option[value="0"]')
   };
 
-  var ErrorTexts = {
+  var ErrorText = {
     TYPE: 'Неверный тип жилья.',
     ROOMS: 'Неверное количество комнат.',
     GUESTS: 'Неверное количество гостей.'
   };
-  var InvalidTexts = {
+  var InvalidText = {
     EMPTY: 'Это поле обязательно для заполнения.',
     TITLE_LENGTH: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
     PRICE_MIN: 'Цена для выбранного типа жилья не может быть ниже ',
@@ -147,20 +147,20 @@
   var getPrice = function (type) {
     var minPrice;
     switch (type) {
-      case HouseTypes.BUNGALO.type:
-        minPrice = HouseTypes.BUNGALO.minPrice;
+      case HouseType.BUNGALO:
+        minPrice = HouseMinPrice.BUNGALO;
         break;
-      case HouseTypes.FLAT.type:
-        minPrice = HouseTypes.FLAT.minPrice;
+      case HouseType.FLAT:
+        minPrice = HouseMinPrice.FLAT;
         break;
-      case HouseTypes.HOUSE.type:
-        minPrice = HouseTypes.HOUSE.minPrice;
+      case HouseType.HOUSE:
+        minPrice = HouseMinPrice.HOUSE;
         break;
-      case HouseTypes.PALACE.type:
-        minPrice = HouseTypes.PALACE.minPrice;
+      case HouseType.PALACE:
+        minPrice = HouseMinPrice.PALACE;
         break;
       default:
-        throw new Error(ErrorTexts.TYPE);
+        throw new Error(ErrorText.TYPE);
     }
     return getRandomInt(MAX_PRICE, minPrice);
   };
@@ -214,18 +214,19 @@
   // Экспорт:
 
   window.data = {
+    map: map,
     getRandomInt: getRandomInt,
     getRandomFromArr: getRandomFromArr,
-    HouseTypes: HouseTypes,
-    HouseNames: HouseNames,
-    HouseMinPrices: HouseMinPrices,
-    HousePlaceholders: HousePlaceholders,
-    Rooms: Rooms,
-    Guests: Guests,
-    GuestsOptions: GuestsOptions,
+    HouseType: HouseType,
+    HouseName: HouseName,
+    HouseMinPrice: HouseMinPrice,
+    HousePlaceholder: HousePlaceholder,
+    RoomsAmount: RoomsAmount,
+    GuestsAmount: GuestsAmount,
+    GuestsOption: GuestsOption,
     generateAdsList: generateAdsList,
-    ErrorTexts: ErrorTexts,
-    InvalidTexts: InvalidTexts,
+    ErrorTexts: ErrorText,
+    InvalidText: InvalidText,
     MAP_WIDTH: MAP_WIDTH
   };
 })();

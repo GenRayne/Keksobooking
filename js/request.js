@@ -3,25 +3,34 @@
 (function () {
   var Request = {
     TIMEOUT: 10000,
-    URL: 'https://js.dump.academy/keksobooking/data',
+    GET: 'GET',
+    POST: 'POST',
     READY_STATE_LOAD: 4,
     OK_STATUS: 200
   };
-  var RequestErrorTexts = {
+  var methodToUrl = {
+    'GET': 'https://js.dump.academy/keksobooking/data',
+    'POST': 'https://js.dump.academy/keksobooking',
+  };
+  var RequestErrorText = {
     ERROR: 'Ошибка соединения. Проверьте подключение к сети.',
     TIMEOUT: 'Время ожидания выполнения запроса превышено.'
   };
   var ads = [];
-  var requestMessage = '';
+  var errorMessage = '';
 
-  var requestData = function () {
+  var request = function (method, data) {
     var xhr = new XMLHttpRequest();
 
-    var onSuccess = function (data) {
-      ads = data;
+    var onSuccess = function (result) {
+      if (method === Request.GET) {
+        ads = result;
+        return;
+      }
+      ads = [];
     };
     var onError = function (message) {
-      requestMessage = message;
+      errorMessage = message;
     };
 
     xhr.addEventListener('load', function () {
@@ -33,33 +42,34 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError(RequestErrorTexts.ERROR);
+      onError(RequestErrorText.ERROR);
     });
 
     xhr.addEventListener('timeout', function () {
-      onError(RequestErrorTexts.TIMEOUT);
+      onError(RequestErrorText.TIMEOUT);
     });
 
     xhr.responseType = 'json';
     xhr.timeout = Request.TIMEOUT;
-    xhr.open('GET', Request.URL);
-    xhr.send();
+    xhr.open(method, methodToUrl[method]);
+    xhr.send(data);
 
-    var request = {
+    var requestResult = {
       ads: ads,
-      requestMessage: requestMessage
+      errorMessage: errorMessage
     };
 
-    return request;
+    return requestResult;
   };
 
-  requestData();
+  request('GET');
 
   // =================================================================
   // Экспорт:
 
   window.request = {
-    requestData: requestData,
+    request: request,
+    RequestErrorText: RequestErrorText
   };
 
 })();
