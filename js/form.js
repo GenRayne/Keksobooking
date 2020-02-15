@@ -115,6 +115,15 @@
     createPins(request('GET').ads);
   };
 
+  var deactivateMap = function () {
+    adForm.reset();
+    disableForms();
+    invalidTitleMessageBox.classList.add('hidden');
+    invalidPriceMessageBox.classList.add('hidden');
+    clearMap();
+    map.classList.add('map--faded');
+  };
+
   var disableForms = function () {
     adForm.classList.add('ad-form--disabled');
     changeInputsState(adFormInputs, true);
@@ -219,6 +228,7 @@
       } else {
         showNotification(successBlock);
       }
+      deactivateMap();
     }
   };
 
@@ -371,6 +381,7 @@
 
   // =================================================================
 
+
   disableForms();
   onRoomsChange();
 
@@ -382,11 +393,6 @@
 
   adFormResetBtn.addEventListener('click', function (ev) {
     ev.preventDefault();
-    adForm.reset();
-    disableForms();
-    invalidTitleMessageBox.classList.add('hidden');
-    invalidPriceMessageBox.classList.add('hidden');
-    clearMap();
-    map.classList.add('map--faded');
+    deactivateMap();
   });
 })();

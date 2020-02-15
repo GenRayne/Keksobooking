@@ -29,16 +29,20 @@
   };
 
   var adsData = [];
+  var requestData = [];
 
   // =================================================================
 
   var createPins = function (adObjects) {
-    for (var i = 0; i < adObjects.length; i++) {
-      var newPin = createPin(adObjects[i]);
+    if (!requestData.length) {
+      requestData = adObjects;
+    }
+    for (var i = 0; i < requestData.length; i++) {
+      var newPin = createPin(requestData[i]);
       pinsBlock.appendChild(newPin);
 
       adsData.push({
-        ad: adObjects[i],
+        ad: requestData[i],
         pin: newPin,
         card: null
       });
