@@ -5,22 +5,23 @@
 
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
-  var pinsBlock = window.pins.pinsBlock;
   var Key = window.pins.Key;
   var createPins = window.pins.createPins;
+  var clearMap = window.pins.clearMap;
 
   var map = window.data.map;
   var HouseType = window.data.HouseType;
   var HouseMinPrice = window.data.HouseMinPrice;
   var HousePlaceholder = window.data.HousePlaceholder;
-  var RoomsAmount = window.data.RoomsAmount;
-  var GuestsAmount = window.data.GuestsAmount;
+  var RoomsQuantity = window.data.RoomsQuantity;
+  var GuestsNumber = window.data.GuestsNumber;
   var GuestsOptions = window.data.GuestsOption;
   var ErrorText = window.data.ErrorText;
   var InvalidText = window.data.InvalidText;
   var MAP_WIDTH = window.data.MAP_WIDTH;
 
-  var request = window.request.request;
+  var filterForm = window.filter.filterForm;
+  var filterFormInputs = window.filter.filterFormInputs;
 
   // ---------------- Переменные формы ----------------
 
@@ -48,13 +49,6 @@
   var invalidPriceMessageBox = adForm.querySelector('#price + p');
   var invalidTitleMessageBox = adForm.querySelector('#title + p');
 
-  var filterForm = map.querySelector('.map__filters');
-  var filterFormType = filterForm.querySelector('#housing-type');
-  var filterFormPrice = filterForm.querySelector('#housing-price');
-  var filterFormRooms = filterForm.querySelector('#housing-rooms');
-  var filterFormCapacity = filterForm.querySelector('#housing-guests');
-  var filterFormFeatures = filterForm.querySelector('#housing-features');
-
   var adFormInputs = [
     adFormAvatar,
     adFormTitle,
@@ -70,13 +64,6 @@
     adFormPhotos,
     adFormSubmitBtn,
     adFormResetBtn
-  ];
-  var filterFormInputs = [
-    filterFormType,
-    filterFormPrice,
-    filterFormRooms,
-    filterFormCapacity,
-    filterFormFeatures
   ];
 
   var errorTemplate = document.querySelector('#error').content;
@@ -112,10 +99,15 @@
     setDefaultAddressValue(true);
     mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
-    createPins(request('GET').ads);
+    if (window.requestData.ads.length) {
+      createPins(window.requestData.ads);
+    } else {
+      createPins(window.request('GET').ads);
+    }
   };
 
   var deactivateMap = function () {
+    filterForm.reset();
     adForm.reset();
     disableForms();
     invalidTitleMessageBox.classList.add('hidden');
@@ -151,19 +143,6 @@
     adFormAddress.value = isActive ? pointerPinCoords : centerPinCoords;
   };
 
-  var clearMap = function () {
-    var pins = pinsBlock.querySelectorAll('.map__pin');
-    var cards = map.querySelectorAll('.map__card.popup');
-    for (var i = 0; i < pins.length; i++) {
-      if (!pins[i].classList.contains('map__pin--main')) {
-        pinsBlock.removeChild(pins[i]);
-      }
-      if (cards[i]) {
-        map.removeChild(cards[i]);
-      }
-    }
-  };
-
   // ======================= Валидация формы =======================
 
   // --------------------- Обработчики ---------------------
@@ -181,34 +160,34 @@
 
   var onRoomsChange = function () {
     switch (adFormRooms.value) {
-      case RoomsAmount[1]:
+      case RoomsQuantity[1]:
         changeCapacityOptionsState(true);
         GuestsOptions[1].disabled = false;
-        if (adFormCapacity.value !== GuestsAmount[1]) {
-          adFormCapacity.value = GuestsAmount[1];
+        if (adFormCapacity.value !== GuestsNumber[1]) {
+          adFormCapacity.value = GuestsNumber[1];
         }
         break;
-      case RoomsAmount[2]:
+      case RoomsQuantity[2]:
         changeCapacityOptionsState(true);
         GuestsOptions[1].disabled = false;
         GuestsOptions[2].disabled = false;
-        if (adFormCapacity.value !== GuestsAmount[1]
-            && adFormCapacity.value !== GuestsAmount[2]) {
-          adFormCapacity.value = GuestsAmount[2];
+        if (adFormCapacity.value !== GuestsNumber[1]
+            && adFormCapacity.value !== GuestsNumber[2]) {
+          adFormCapacity.value = GuestsNumber[2];
         }
         break;
-      case RoomsAmount[3]:
+      case RoomsQuantity[3]:
         changeCapacityOptionsState(false);
         GuestsOptions[0].disabled = true;
-        if (adFormCapacity.value === GuestsAmount[0]) {
-          adFormCapacity.value = GuestsAmount[3];
+        if (adFormCapacity.value === GuestsNumber[0]) {
+          adFormCapacity.value = GuestsNumber[3];
         }
         break;
-      case RoomsAmount[100]:
+      case RoomsQuantity[100]:
         changeCapacityOptionsState(true);
         GuestsOptions[0].disabled = false;
-        if (adFormCapacity.value !== GuestsAmount[0]) {
-          adFormCapacity.value = GuestsAmount[0];
+        if (adFormCapacity.value !== GuestsNumber[0]) {
+          adFormCapacity.value = GuestsNumber[0];
         }
         break;
       default:
@@ -222,7 +201,7 @@
     ev.preventDefault();
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
-      var res = request('POST', adFormData);
+      var res = window.request('POST', adFormData);
       if (res.errorMessage) {
         showNotification(errorBlock);
       } else {

@@ -19,7 +19,7 @@
   var ads = [];
   var errorMessage = '';
 
-  var request = function (method, data) {
+  window.request = function (method, data) {
     var xhr = new XMLHttpRequest();
 
     var onSuccess = function (result) {
@@ -59,17 +59,11 @@
       errorMessage: errorMessage
     };
 
+    window.requestData = requestResult;
+
     return requestResult;
   };
 
-  request('GET');
-
-  // =================================================================
-  // Экспорт:
-
-  window.request = {
-    request: request,
-    RequestErrorText: RequestErrorText
-  };
+  window.requestData = window.request('GET');
 
 })();

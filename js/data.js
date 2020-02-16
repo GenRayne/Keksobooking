@@ -43,6 +43,7 @@
   var adFormCapacity = adForm.querySelector('#capacity');
 
   var HouseType = {
+    ANY: 'any',
     BUNGALO: 'bungalo',
     FLAT: 'flat',
     HOUSE: 'house',
@@ -55,6 +56,7 @@
     PALACE: 'Дворец'
   };
   var HouseMinPrice = {
+    ANY: 'any',
     BUNGALO: 0,
     FLAT: 1000,
     HOUSE: 5000,
@@ -66,13 +68,15 @@
     HOUSE: HouseMinPrice.HOUSE.toString(),
     PALACE: HouseMinPrice.PALACE.toString()
   };
-  var RoomsAmount = {
+  var RoomsQuantity = {
+    ANY: 'any',
     1: '1',
     2: '2',
     3: '3',
     100: '100'
   };
-  var GuestsAmount = {
+  var GuestsNumber = {
+    ANY: 'any',
     1: '1',
     2: '2',
     3: '3',
@@ -221,8 +225,8 @@
     HouseName: HouseName,
     HouseMinPrice: HouseMinPrice,
     HousePlaceholder: HousePlaceholder,
-    RoomsAmount: RoomsAmount,
-    GuestsAmount: GuestsAmount,
+    RoomsQuantity: RoomsQuantity,
+    GuestsNumber: GuestsNumber,
     GuestsOption: GuestsOption,
     generateAdsList: generateAdsList,
     ErrorTexts: ErrorText,

@@ -2,10 +2,13 @@
 
 (function () {
   // --------------------- Импорт ---------------------
+
   var createCard = window.card.createCard;
   var map = window.data.map;
 
   // ---------------- Переменные формы ----------------
+
+  var ADS_QUANTITY = 5;
 
   var pinsBlock = map.querySelector('.map__pins');
   var mainPinEl = document.querySelector('.map__pin--main');
@@ -29,23 +32,25 @@
   };
 
   var adsData = [];
-  var requestData = [];
 
   // =================================================================
 
   var createPins = function (adObjects) {
-    if (!requestData.length) {
-      requestData = adObjects;
-    }
-    for (var i = 0; i < requestData.length; i++) {
-      var newPin = createPin(requestData[i]);
-      pinsBlock.appendChild(newPin);
+    clearMap();
 
-      adsData.push({
-        ad: requestData[i],
-        pin: newPin,
-        card: null
-      });
+    var adsQuantity = adObjects.length > ADS_QUANTITY ? ADS_QUANTITY : adObjects.length;
+
+    for (var i = 0; i < adsQuantity; i++) {
+      if ('offer' in adObjects[i]) {
+        var newPin = createPin(adObjects[i]);
+        pinsBlock.appendChild(newPin);
+
+        adsData.push({
+          ad: adObjects[i],
+          pin: newPin,
+          card: null
+        });
+      }
     }
     linkPinsWithCards();
   };
@@ -109,6 +114,21 @@
     document.addEventListener('keydown', onPopupEscPress);
   };
 
+  // ================== Очистка карты ==================
+
+  var clearMap = function () {
+    var pins = pinsBlock.querySelectorAll('.map__pin');
+    var cards = map.querySelectorAll('.map__card.popup');
+    for (var i = 0; i < pins.length; i++) {
+      if (!pins[i].classList.contains('map__pin--main')) {
+        pinsBlock.removeChild(pins[i]);
+      }
+      if (cards[i]) {
+        map.removeChild(cards[i]);
+      }
+    }
+  };
+
   // =================================================================
   // Экспорт:
 
@@ -118,6 +138,7 @@
     Pin: Pin,
     MainPin: MainPin,
     Key: Key,
-    createPins: createPins
+    createPins: createPins,
+    clearMap: clearMap
   };
 })();

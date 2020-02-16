@@ -2,11 +2,13 @@
 
 (function () {
   // --------------------- Импорт ---------------------
+
   var HouseType = window.data.HouseType;
   var HouseName = window.data.HouseName;
   var ErrorText = window.data.ErrorText;
 
   // ---------------- Переменные формы ----------------
+
   var SINGULAR_AMOUNT = 1;
   var singularDeclAmounts = {MIN: 1, MAX: 5};
   var PLURAL_1 = 11;
