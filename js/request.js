@@ -4,6 +4,7 @@
   // --------------------- Импорт ---------------------
 
   var showNotification = window.notifications.showNotification;
+  var successBlock = window.notifications.successBlock;
   var errorBlock = window.notifications.errorBlock;
   var createPins = window.pins.createPins;
 
@@ -25,26 +26,29 @@
     TIMEOUT: 'Время ожидания выполнения запроса превышено.',
     FAILED_UPLOAD: 'Ошибка загрузки объявления'
   };
-  var ads = [];
-  var errorMessage = '';
+  var requestResult = {
+    ads: [],
+    errorMessage: ''
+  };
 
   window.request = function (method, data) {
     var xhr = new XMLHttpRequest();
 
     var onSuccess = function (result) {
       if (method === Request.GET) {
-        ads = result;
-        createPins(ads);
+        createPins(result);
+        requestResult.ads = result;
+        requestResult.errorMessage = '';
         return;
       }
-      ads = [];
+      showNotification(successBlock);
     };
     var onError = function (message) {
-      errorMessage = message;
+      requestResult.errorMessage = message;
       if (method === Request.POST) {
         showNotification(errorBlock, RequestErrorText.FAILED_UPLOAD);
       } else {
-        showNotification(errorBlock, errorMessage);
+        showNotification(errorBlock, message);
       }
     };
 
@@ -54,6 +58,7 @@
       } else {
         onError('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
       }
+      window.requestData = requestResult;
     });
 
     xhr.addEventListener('error', function () {
@@ -69,12 +74,6 @@
     xhr.open(method, methodToUrl[method]);
     xhr.send(data);
 
-    var requestResult = {
-      ads: ads,
-      errorMessage: errorMessage
-    };
-
-    window.requestData = requestResult;
     return requestResult;
   };
 

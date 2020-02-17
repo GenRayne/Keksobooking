@@ -7,9 +7,6 @@
   var ErrorText = window.util.ErrorText;
   var InvalidText = window.util.InvalidText;
 
-  var showNotification = window.notifications.showNotification;
-  var successBlock = window.notifications.successBlock;
-
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
   var createPins = window.pins.createPins;
@@ -189,10 +186,7 @@
     ev.preventDefault();
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
-      var res = window.request('POST', adFormData);
-      if (!res.errorMessage) {
-        showNotification(successBlock);
-      }
+      window.request('POST', adFormData);
       deactivateMap();
     }
   };
