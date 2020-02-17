@@ -3,10 +3,10 @@
 (function () {
   // --------------------- Импорт ---------------------
   var createCard = window.card.createCard;
+  var map = window.data.map;
 
   // ---------------- Переменные формы ----------------
 
-  var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
   var mainPinEl = document.querySelector('.map__pin--main');
   var pinTemplate = document.querySelector('#pin').content;
@@ -22,23 +22,27 @@
     HEIGHT: 84,
     START_Y: parseInt(window.getComputedStyle(mainPinEl).top, 10)
   };
-  var Keys = {
+  var Key = {
     LEFT_MOUSE_BTN: 0,
     ENTER: 'Enter',
     ESCAPE: 'Escape'
   };
 
   var adsData = [];
+  var requestData = [];
 
   // =================================================================
 
   var createPins = function (adObjects) {
-    for (var i = 0; i < adObjects.length; i++) {
-      var newPin = createPin(adObjects[i]);
+    if (!requestData.length) {
+      requestData = adObjects;
+    }
+    for (var i = 0; i < requestData.length; i++) {
+      var newPin = createPin(requestData[i]);
       pinsBlock.appendChild(newPin);
 
       adsData.push({
-        ad: adObjects[i],
+        ad: requestData[i],
         pin: newPin,
         card: null
       });
@@ -73,8 +77,8 @@
   };
 
   var openCard = function (pin) {
-    var onPopupEscPress = function (event) {
-      if (event.key === Keys.ESCAPE) {
+    var onPopupEscPress = function (ev) {
+      if (ev.key === Key.ESCAPE) {
         closeCard();
       }
     };
@@ -110,9 +114,10 @@
 
   window.pins = {
     mainPinEl: mainPinEl,
+    pinsBlock: pinsBlock,
     Pin: Pin,
     MainPin: MainPin,
-    Keys: Keys,
+    Key: Key,
     createPins: createPins
   };
 })();

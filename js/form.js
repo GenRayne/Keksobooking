@@ -5,26 +5,27 @@
 
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
-  var Keys = window.pins.Keys;
+  var pinsBlock = window.pins.pinsBlock;
+  var Key = window.pins.Key;
   var createPins = window.pins.createPins;
 
-  var HouseTypes = window.data.HouseTypes;
-  var HouseMinPrices = window.data.HouseMinPrices;
-  var HousePlaceholders = window.data.HousePlaceholders;
-  var Rooms = window.data.Rooms;
-  var Guests = window.data.Guests;
-  var GuestsOptions = window.data.GuestsOptions;
-  var ErrorTexts = window.data.ErrorTexts;
-  var InvalidTexts = window.data.InvalidTexts;
+  var map = window.data.map;
+  var HouseType = window.data.HouseType;
+  var HouseMinPrice = window.data.HouseMinPrice;
+  var HousePlaceholder = window.data.HousePlaceholder;
+  var RoomsAmount = window.data.RoomsAmount;
+  var GuestsAmount = window.data.GuestsAmount;
+  var GuestsOptions = window.data.GuestsOption;
+  var ErrorText = window.data.ErrorText;
+  var InvalidText = window.data.InvalidText;
   var MAP_WIDTH = window.data.MAP_WIDTH;
 
-  var requestData = window.request.requestData;
+  var request = window.request.request;
 
   // ---------------- Переменные формы ----------------
 
-  var map = document.querySelector('.map');
-  var pinsBlock = map.querySelector('.map__pins');
   var imageRegExp = /.jpg$|.jpeg$|.png$/i;
+  var mainContent = document.querySelector('main');
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -78,15 +79,29 @@
     filterFormFeatures
   ];
 
+  var errorTemplate = document.querySelector('#error').content;
+  var errorBlock = errorTemplate.querySelector('.error').cloneNode(true);
+  var errorMessage = errorBlock.querySelector('.error__message');
+  var tryAgainBtn = errorBlock.querySelector('.error__button');
+
+  var successTemplate = document.querySelector('#success').content;
+  var successBlock = successTemplate.querySelector('.success').cloneNode(true);
+  var successMessage = successBlock.querySelector('.success__message');
+
+  var Notification = {
+    ERROR: errorBlock,
+    SUCCESS: successBlock
+  };
+
   // ============== Активация карты и работа с формами ==============
 
   var onMainPinMousedown = function (ev) {
-    if (ev.button === Keys.LEFT_MOUSE_BTN) {
+    if (ev.button === Key.LEFT_MOUSE_BTN) {
       activateMap();
     }
   };
   var onMainPinEnterPress = function (ev) {
-    if (ev.key === Keys.ENTER) {
+    if (ev.key === Key.ENTER) {
       activateMap();
     }
   };
@@ -97,7 +112,16 @@
     setDefaultAddressValue(true);
     mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
-    createPins(requestData().ads);
+    createPins(request('GET').ads);
+  };
+
+  var deactivateMap = function () {
+    adForm.reset();
+    disableForms();
+    invalidTitleMessageBox.classList.add('hidden');
+    invalidPriceMessageBox.classList.add('hidden');
+    clearMap();
+    map.classList.add('map--faded');
   };
 
   var disableForms = function () {
@@ -157,50 +181,92 @@
 
   var onRoomsChange = function () {
     switch (adFormRooms.value) {
-      case Rooms[1]:
+      case RoomsAmount[1]:
         changeCapacityOptionsState(true);
         GuestsOptions[1].disabled = false;
-        if (adFormCapacity.value !== Guests[1]) {
-          adFormCapacity.value = Guests[1];
+        if (adFormCapacity.value !== GuestsAmount[1]) {
+          adFormCapacity.value = GuestsAmount[1];
         }
         break;
-      case Rooms[2]:
+      case RoomsAmount[2]:
         changeCapacityOptionsState(true);
         GuestsOptions[1].disabled = false;
         GuestsOptions[2].disabled = false;
-        if (adFormCapacity.value !== Guests[1]
-            && adFormCapacity.value !== Guests[2]) {
-          adFormCapacity.value = Guests[2];
+        if (adFormCapacity.value !== GuestsAmount[1]
+            && adFormCapacity.value !== GuestsAmount[2]) {
+          adFormCapacity.value = GuestsAmount[2];
         }
         break;
-      case Rooms[3]:
+      case RoomsAmount[3]:
         changeCapacityOptionsState(false);
         GuestsOptions[0].disabled = true;
-        if (adFormCapacity.value === Guests[0]) {
-          adFormCapacity.value = Guests[3];
+        if (adFormCapacity.value === GuestsAmount[0]) {
+          adFormCapacity.value = GuestsAmount[3];
         }
         break;
-      case Rooms[100]:
+      case RoomsAmount[100]:
         changeCapacityOptionsState(true);
         GuestsOptions[0].disabled = false;
-        if (adFormCapacity.value !== Guests[0]) {
-          adFormCapacity.value = Guests[0];
+        if (adFormCapacity.value !== GuestsAmount[0]) {
+          adFormCapacity.value = GuestsAmount[0];
         }
         break;
       default:
-        throw new Error(ErrorTexts.ROOMS);
+        throw new Error(ErrorText.ROOMS);
     }
   };
 
   var onAdFormSubmit = function (ev) {
     adFormTitle.removeEventListener('input', onTitleInput);
     adFormPrice.removeEventListener('input', onPriceInput);
-    if (!checkFormValidity()) {
-      ev.preventDefault();
+    ev.preventDefault();
+    if (checkFormValidity()) {
+      var adFormData = new FormData(adForm);
+      var res = request('POST', adFormData);
+      if (res.errorMessage) {
+        showNotification(errorBlock);
+      } else {
+        showNotification(successBlock);
+      }
+      deactivateMap();
     }
   };
 
-  // ------------------ Функции для обработки ------------------
+  // ============== Уведомления по результатам отправки формы ==============
+
+  var showNotification = function (block) {
+    block.classList.remove('hidden');
+    if (block === Notification.ERROR && !document.querySelector('.error')) {
+      mainContent.appendChild(errorBlock);
+    }
+    if (block === Notification.SUCCESS && !document.querySelector('.success')) {
+      mainContent.appendChild(successBlock);
+    }
+
+    var onBlockClose = function (ev) {
+      if (ev.button === Key.LEFT_MOUSE_BTN || ev.key === Key.ESCAPE) {
+        block.classList.add('hidden');
+        document.removeEventListener('keydown', onBlockClose);
+        if (block === Notification.ERROR) {
+          tryAgainBtn.removeEventListener('click', onBlockClose);
+        }
+      }
+    };
+    var onOutsideClick = function (ev) {
+      if (ev.target !== errorMessage && ev.target !== successMessage) {
+        block.classList.add('hidden');
+        block.removeEventListener('click', onOutsideClick);
+      }
+    };
+
+    document.addEventListener('keydown', onBlockClose);
+    block.addEventListener('click', onOutsideClick);
+    if (block === Notification.ERROR) {
+      tryAgainBtn.addEventListener('click', onBlockClose);
+    }
+  };
+
+  // ------------------ Функции для валидации ------------------
 
   var changeCapacityOptionsState = function (isDisabled) {
     for (var i = 0; i < adFormCapacity.children.length; i++) {
@@ -210,24 +276,24 @@
 
   var setMinPrice = function () {
     switch (adFormType.value) {
-      case HouseTypes.BUNGALO:
-        adFormPrice.min = HouseMinPrices.BUNGALO;
-        adFormPrice.placeholder = HousePlaceholders.BUNGALO;
+      case HouseType.BUNGALO:
+        adFormPrice.min = HouseMinPrice.BUNGALO;
+        adFormPrice.placeholder = HousePlaceholder.BUNGALO;
         break;
-      case HouseTypes.FLAT:
-        adFormPrice.min = HouseMinPrices.FLAT;
-        adFormPrice.placeholder = HousePlaceholders.FLAT;
+      case HouseType.FLAT:
+        adFormPrice.min = HouseMinPrice.FLAT;
+        adFormPrice.placeholder = HousePlaceholder.FLAT;
         break;
-      case HouseTypes.HOUSE:
-        adFormPrice.min = HouseMinPrices.HOUSE;
-        adFormPrice.placeholder = HousePlaceholders.HOUSE;
+      case HouseType.HOUSE:
+        adFormPrice.min = HouseMinPrice.HOUSE;
+        adFormPrice.placeholder = HousePlaceholder.HOUSE;
         break;
-      case HouseTypes.PALACE:
-        adFormPrice.min = HouseMinPrices.PALACE;
-        adFormPrice.placeholder = HousePlaceholders.PALACE;
+      case HouseType.PALACE:
+        adFormPrice.min = HouseMinPrice.PALACE;
+        adFormPrice.placeholder = HousePlaceholder.PALACE;
         break;
       default:
-        throw new Error(ErrorTexts.TYPE);
+        throw new Error(ErrorText.TYPE);
     }
     return adFormPrice.placeholder;
   };
@@ -247,9 +313,9 @@
       invalidTitleMessageBox.classList.remove('hidden');
 
       if (adFormTitle.validity.valueMissing) {
-        invalidTitleMessageBox.textContent = InvalidTexts.EMPTY;
+        invalidTitleMessageBox.textContent = InvalidText.EMPTY;
       } else if (adFormTitle.validity.tooShort || adFormTitle.validity.tooLong) {
-        invalidTitleMessageBox.textContent = InvalidTexts.TITLE_LENGTH;
+        invalidTitleMessageBox.textContent = InvalidText.TITLE_LENGTH;
       }
       adFormTitle.addEventListener('input', onTitleInput);
       return false;
@@ -265,13 +331,13 @@
       invalidPriceMessageBox.classList.remove('hidden');
 
       if (adFormPrice.validity.valueMissing) {
-        invalidPriceMessageBox.textContent = InvalidTexts.EMPTY;
+        invalidPriceMessageBox.textContent = InvalidText.EMPTY;
       } else if (adFormPrice.validity.rangeUnderflow) {
         invalidPriceMessageBox.textContent =
-          InvalidTexts.PRICE_MIN + setMinPrice() + '.';
+          InvalidText.PRICE_MIN + setMinPrice() + '.';
       } else if (adFormPrice.validity.rangeOverflow) {
         invalidPriceMessageBox.textContent =
-          InvalidTexts.PRICE_MAX;
+          InvalidText.PRICE_MAX;
       }
       adFormPrice.addEventListener('input', onPriceInput);
       return false;
@@ -315,6 +381,7 @@
 
   // =================================================================
 
+
   disableForms();
   onRoomsChange();
 
@@ -326,11 +393,6 @@
 
   adFormResetBtn.addEventListener('click', function (ev) {
     ev.preventDefault();
-    adForm.reset();
-    disableForms();
-    invalidTitleMessageBox.classList.add('hidden');
-    invalidPriceMessageBox.classList.add('hidden');
-    clearMap();
-    map.classList.add('map--faded');
+    deactivateMap();
   });
 })();
