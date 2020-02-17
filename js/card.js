@@ -3,14 +3,15 @@
 (function () {
   // --------------------- Импорт ---------------------
 
+  var ErrorText = window.util.ErrorText;
+
   var HouseType = window.data.HouseType;
   var HouseName = window.data.HouseName;
-  var ErrorText = window.data.ErrorText;
 
   // ---------------- Переменные формы ----------------
 
-  var SINGULAR_AMOUNT = 1;
-  var singularDeclAmounts = {MIN: 1, MAX: 5};
+  var SINGULAR_QUANTITY = 1;
+  var SingularDeclQuantityy = {MIN: 1, MAX: 5};
   var PLURAL_1 = 11;
 
   var cardTemplate = document.querySelector('#card').content;
@@ -85,16 +86,16 @@
   var formCapacityText = function (roomsQuantity, guestsQuantity) {
     var text = roomsQuantity;
 
-    if (roomsQuantity === SINGULAR_AMOUNT) {
+    if (roomsQuantity === SINGULAR_QUANTITY) {
       text += ' комната ';
-    } else if (roomsQuantity.toString().slice(-1) > singularDeclAmounts.MIN &&
-               roomsQuantity.toString().slice(-1) < singularDeclAmounts.MAX) {
+    } else if (roomsQuantity.toString().slice(-1) > SingularDeclQuantityy.MIN &&
+               roomsQuantity.toString().slice(-1) < SingularDeclQuantityy.MAX) {
       text += ' комнаты ';
     } else {
       text += ' комнат ';
     }
-    if (guestsQuantity === SINGULAR_AMOUNT || (guestsQuantity > PLURAL_1 &&
-        guestsQuantity.toString().slice(-1) === SINGULAR_AMOUNT &&
+    if (guestsQuantity === SINGULAR_QUANTITY || (guestsQuantity > PLURAL_1 &&
+        guestsQuantity.toString().slice(-1) === SINGULAR_QUANTITY &&
         guestsQuantity.toString().slice(-2) !== PLURAL_1)) {
       text += 'для ' + guestsQuantity + ' гостя';
     } else {

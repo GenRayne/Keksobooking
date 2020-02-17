@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  // --------------------- Импорт ---------------------
+
+  var getRandomInt = window.util.getRandomInt;
+  var getRandomFromArr = window.util.getRandomFromArr;
+  var ErrorText = window.util.ErrorText;
+
+  // =================================================================
   var map = document.querySelector('.map');
   var MAP_WIDTH = map.offsetWidth;
   var MIN_INT = 1;
@@ -62,12 +69,6 @@
     HOUSE: 5000,
     PALACE: 10000
   };
-  var HousePlaceholder = {
-    BUNGALO: HouseMinPrice.BUNGALO.toString(),
-    FLAT: HouseMinPrice.FLAT.toString(),
-    HOUSE: HouseMinPrice.HOUSE.toString(),
-    PALACE: HouseMinPrice.PALACE.toString()
-  };
   var RoomsQuantity = {
     ANY: 'any',
     1: '1',
@@ -87,18 +88,6 @@
     2: adFormCapacity.querySelector('option[value="2"]'),
     3: adFormCapacity.querySelector('option[value="3"]'),
     0: adFormCapacity.querySelector('option[value="0"]')
-  };
-
-  var ErrorText = {
-    TYPE: 'Неверный тип жилья.',
-    ROOMS: 'Неверное количество комнат.',
-    GUESTS: 'Неверное количество гостей.'
-  };
-  var InvalidText = {
-    EMPTY: 'Это поле обязательно для заполнения.',
-    TITLE_LENGTH: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
-    PRICE_MIN: 'Цена для выбранного типа жилья не может быть ниже ',
-    PRICE_MAX: 'Цена для выбранного типа жилья не может быть выше 1 000 000.'
   };
 
   // =================================================================
@@ -202,35 +191,18 @@
     };
   };
 
-  var getRandomInt = function (max, min) {
-    if (!min) {
-      min = 0;
-    }
-    var randomInt = Math.random() * (max - min) + min;
-    return Math.round(randomInt);
-  };
-
-  var getRandomFromArr = function (arr) {
-    return arr[getRandomInt(arr.length - 1)];
-  };
-
   // =================================================================
   // Экспорт:
 
   window.data = {
     map: map,
-    getRandomInt: getRandomInt,
-    getRandomFromArr: getRandomFromArr,
     HouseType: HouseType,
     HouseName: HouseName,
     HouseMinPrice: HouseMinPrice,
-    HousePlaceholder: HousePlaceholder,
     RoomsQuantity: RoomsQuantity,
     GuestsNumber: GuestsNumber,
     GuestsOption: GuestsOption,
     generateAdsList: generateAdsList,
-    ErrorTexts: ErrorText,
-    InvalidText: InvalidText,
     MAP_WIDTH: MAP_WIDTH
   };
 })();

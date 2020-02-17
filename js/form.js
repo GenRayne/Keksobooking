@@ -3,21 +3,24 @@
 (function () {
   // --------------------- Импорт ---------------------
 
+  var Key = window.util.Key;
+  var ErrorText = window.util.ErrorText;
+  var InvalidText = window.util.InvalidText;
+
+  var showNotification = window.notifications.showNotification;
+  var successBlock = window.notifications.successBlock;
+
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
-  var Key = window.pins.Key;
   var createPins = window.pins.createPins;
   var clearMap = window.pins.clearMap;
 
   var map = window.data.map;
   var HouseType = window.data.HouseType;
   var HouseMinPrice = window.data.HouseMinPrice;
-  var HousePlaceholder = window.data.HousePlaceholder;
   var RoomsQuantity = window.data.RoomsQuantity;
   var GuestsNumber = window.data.GuestsNumber;
   var GuestsOptions = window.data.GuestsOption;
-  var ErrorText = window.data.ErrorText;
-  var InvalidText = window.data.InvalidText;
   var MAP_WIDTH = window.data.MAP_WIDTH;
 
   var filterForm = window.filter.filterForm;
@@ -26,7 +29,6 @@
   // ---------------- Переменные формы ----------------
 
   var imageRegExp = /.jpg$|.jpeg$|.png$/i;
-  var mainContent = document.querySelector('main');
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -66,20 +68,6 @@
     adFormResetBtn
   ];
 
-  var errorTemplate = document.querySelector('#error').content;
-  var errorBlock = errorTemplate.querySelector('.error').cloneNode(true);
-  var errorMessage = errorBlock.querySelector('.error__message');
-  var tryAgainBtn = errorBlock.querySelector('.error__button');
-
-  var successTemplate = document.querySelector('#success').content;
-  var successBlock = successTemplate.querySelector('.success').cloneNode(true);
-  var successMessage = successBlock.querySelector('.success__message');
-
-  var Notification = {
-    ERROR: errorBlock,
-    SUCCESS: successBlock
-  };
-
   // ============== Активация карты и работа с формами ==============
 
   var onMainPinMousedown = function (ev) {
@@ -99,7 +87,7 @@
     setDefaultAddressValue(true);
     mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
-    if (window.requestData.ads.length) {
+    if (window.requestData && window.requestData.ads.length) {
       createPins(window.requestData.ads);
     } else {
       createPins(window.request('GET').ads);
@@ -202,46 +190,10 @@
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
       var res = window.request('POST', adFormData);
-      if (res.errorMessage) {
-        showNotification(errorBlock);
-      } else {
+      if (!res.errorMessage) {
         showNotification(successBlock);
       }
       deactivateMap();
-    }
-  };
-
-  // ============== Уведомления по результатам отправки формы ==============
-
-  var showNotification = function (block) {
-    block.classList.remove('hidden');
-    if (block === Notification.ERROR && !document.querySelector('.error')) {
-      mainContent.appendChild(errorBlock);
-    }
-    if (block === Notification.SUCCESS && !document.querySelector('.success')) {
-      mainContent.appendChild(successBlock);
-    }
-
-    var onBlockClose = function (ev) {
-      if (ev.button === Key.LEFT_MOUSE_BTN || ev.key === Key.ESCAPE) {
-        block.classList.add('hidden');
-        document.removeEventListener('keydown', onBlockClose);
-        if (block === Notification.ERROR) {
-          tryAgainBtn.removeEventListener('click', onBlockClose);
-        }
-      }
-    };
-    var onOutsideClick = function (ev) {
-      if (ev.target !== errorMessage && ev.target !== successMessage) {
-        block.classList.add('hidden');
-        block.removeEventListener('click', onOutsideClick);
-      }
-    };
-
-    document.addEventListener('keydown', onBlockClose);
-    block.addEventListener('click', onOutsideClick);
-    if (block === Notification.ERROR) {
-      tryAgainBtn.addEventListener('click', onBlockClose);
     }
   };
 
@@ -257,19 +209,19 @@
     switch (adFormType.value) {
       case HouseType.BUNGALO:
         adFormPrice.min = HouseMinPrice.BUNGALO;
-        adFormPrice.placeholder = HousePlaceholder.BUNGALO;
+        adFormPrice.placeholder = HouseMinPrice.BUNGALO.toString();
         break;
       case HouseType.FLAT:
         adFormPrice.min = HouseMinPrice.FLAT;
-        adFormPrice.placeholder = HousePlaceholder.FLAT;
+        adFormPrice.placeholder = HouseMinPrice.FLAT.toString();
         break;
       case HouseType.HOUSE:
         adFormPrice.min = HouseMinPrice.HOUSE;
-        adFormPrice.placeholder = HousePlaceholder.HOUSE;
+        adFormPrice.placeholder = HouseMinPrice.HOUSE.toString();
         break;
       case HouseType.PALACE:
         adFormPrice.min = HouseMinPrice.PALACE;
-        adFormPrice.placeholder = HousePlaceholder.PALACE;
+        adFormPrice.placeholder = HouseMinPrice.PALACE.toString();
         break;
       default:
         throw new Error(ErrorText.TYPE);
@@ -359,7 +311,6 @@
   };
 
   // =================================================================
-
 
   disableForms();
   onRoomsChange();

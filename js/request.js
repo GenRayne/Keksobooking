@@ -1,6 +1,14 @@
 'use strict';
 
 (function () {
+  // --------------------- Импорт ---------------------
+
+  var showNotification = window.notifications.showNotification;
+  var errorBlock = window.notifications.errorBlock;
+  var createPins = window.pins.createPins;
+
+  // ---------------- Переменные формы ----------------
+
   var Request = {
     TIMEOUT: 10000,
     GET: 'GET',
@@ -14,7 +22,8 @@
   };
   var RequestErrorText = {
     ERROR: 'Ошибка соединения. Проверьте подключение к сети.',
-    TIMEOUT: 'Время ожидания выполнения запроса превышено.'
+    TIMEOUT: 'Время ожидания выполнения запроса превышено.',
+    FAILED_UPLOAD: 'Ошибка загрузки объявления'
   };
   var ads = [];
   var errorMessage = '';
@@ -25,12 +34,18 @@
     var onSuccess = function (result) {
       if (method === Request.GET) {
         ads = result;
+        createPins(ads);
         return;
       }
       ads = [];
     };
     var onError = function (message) {
       errorMessage = message;
+      if (method === Request.POST) {
+        showNotification(errorBlock, RequestErrorText.FAILED_UPLOAD);
+      } else {
+        showNotification(errorBlock, errorMessage);
+      }
     };
 
     xhr.addEventListener('load', function () {
@@ -60,10 +75,7 @@
     };
 
     window.requestData = requestResult;
-
     return requestResult;
   };
-
-  window.requestData = window.request('GET');
 
 })();

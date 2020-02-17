@@ -3,8 +3,9 @@
 (function () {
   // --------------------- Импорт ---------------------
 
-  var createCard = window.card.createCard;
+  var Key = window.util.Key;
   var map = window.data.map;
+  var createCard = window.card.createCard;
 
   // ---------------- Переменные формы ----------------
 
@@ -24,11 +25,6 @@
     ROUND_SIDE: 62,
     HEIGHT: 84,
     START_Y: parseInt(window.getComputedStyle(mainPinEl).top, 10)
-  };
-  var Key = {
-    LEFT_MOUSE_BTN: 0,
-    ENTER: 'Enter',
-    ESCAPE: 'Escape'
   };
 
   var adsData = [];
