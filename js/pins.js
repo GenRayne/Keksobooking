@@ -2,11 +2,15 @@
 
 (function () {
   // --------------------- Импорт ---------------------
+
+  var Key = window.util.Key;
   var createCard = window.card.createCard;
-  var map = window.data.map;
 
   // ---------------- Переменные формы ----------------
 
+  var ADS_QUANTITY = 5;
+
+  var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
   var mainPinEl = document.querySelector('.map__pin--main');
   var pinTemplate = document.querySelector('#pin').content;
@@ -22,30 +26,27 @@
     HEIGHT: 84,
     START_Y: parseInt(window.getComputedStyle(mainPinEl).top, 10)
   };
-  var Key = {
-    LEFT_MOUSE_BTN: 0,
-    ENTER: 'Enter',
-    ESCAPE: 'Escape'
-  };
 
   var adsData = [];
-  var requestData = [];
 
   // =================================================================
 
-  var createPins = function (adObjects) {
-    if (!requestData.length) {
-      requestData = adObjects;
-    }
-    for (var i = 0; i < requestData.length; i++) {
-      var newPin = createPin(requestData[i]);
-      pinsBlock.appendChild(newPin);
+  var createPins = function (ads) {
+    clearMap();
 
-      adsData.push({
-        ad: requestData[i],
-        pin: newPin,
-        card: null
-      });
+    var adsQuantity = ads.length > ADS_QUANTITY ? ADS_QUANTITY : ads.length;
+
+    for (var i = 0; i < adsQuantity; i++) {
+      if ('offer' in ads[i]) {
+        var newPin = createPin(ads[i]);
+        pinsBlock.appendChild(newPin);
+
+        adsData.push({
+          ad: ads[i],
+          pin: newPin,
+          card: null
+        });
+      }
     }
     linkPinsWithCards();
   };
@@ -109,15 +110,30 @@
     document.addEventListener('keydown', onPopupEscPress);
   };
 
+  // ================== Очистка карты ==================
+
+  var clearMap = function () {
+    var pins = pinsBlock.querySelectorAll('.map__pin:not(.map__pin--main)');
+    var cards = map.querySelectorAll('.map__card.popup');
+    for (var i = 0; i < pins.length; i++) {
+      pinsBlock.removeChild(pins[i]);
+      if (cards[i]) {
+        map.removeChild(cards[i]);
+      }
+    }
+  };
+
   // =================================================================
   // Экспорт:
 
   window.pins = {
+    map: map,
     mainPinEl: mainPinEl,
     pinsBlock: pinsBlock,
     Pin: Pin,
     MainPin: MainPin,
     Key: Key,
-    createPins: createPins
+    createPins: createPins,
+    clearMap: clearMap
   };
 })();

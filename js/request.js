@@ -1,6 +1,15 @@
 'use strict';
 
 (function () {
+  // --------------------- Импорт ---------------------
+
+  var showNotification = window.notifications.showNotification;
+  var successBlock = window.notifications.successBlock;
+  var errorBlock = window.notifications.errorBlock;
+  var createPins = window.pins.createPins;
+
+  // ---------------- Переменные формы ----------------
+
   var Request = {
     TIMEOUT: 10000,
     GET: 'GET',
@@ -14,24 +23,17 @@
   };
   var RequestErrorText = {
     ERROR: 'Ошибка соединения. Проверьте подключение к сети.',
-    TIMEOUT: 'Время ожидания выполнения запроса превышено.'
+    TIMEOUT: 'Время ожидания выполнения запроса превышено.',
+    FAILED_UPLOAD: 'Ошибка загрузки объявления'
   };
-  var ads = [];
-  var errorMessage = '';
 
-  var request = function (method, data) {
+  window.requestData = {
+    ads: [],
+    errorMessage: ''
+  };
+
+  window.request = function (method, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
-
-    var onSuccess = function (result) {
-      if (method === Request.GET) {
-        ads = result;
-        return;
-      }
-      ads = [];
-    };
-    var onError = function (message) {
-      errorMessage = message;
-    };
 
     xhr.addEventListener('load', function () {
       if (Request.READY_STATE_LOAD && Request.OK_STATUS) {
@@ -44,7 +46,6 @@
     xhr.addEventListener('error', function () {
       onError(RequestErrorText.ERROR);
     });
-
     xhr.addEventListener('timeout', function () {
       onError(RequestErrorText.TIMEOUT);
     });
@@ -53,23 +54,26 @@
     xhr.timeout = Request.TIMEOUT;
     xhr.open(method, methodToUrl[method]);
     xhr.send(data);
-
-    var requestResult = {
-      ads: ads,
-      errorMessage: errorMessage
-    };
-
-    return requestResult;
   };
 
-  request('GET');
+  // --------------------- Обработчики ---------------------
 
-  // =================================================================
-  // Экспорт:
+  window.onGetSuccess = function (result) {
+    window.requestData.errorMessage = '';
+    window.requestData.ads = result;
+    createPins(result);
+  };
+  window.onPostSuccess = function () {
+    showNotification(successBlock);
+  };
 
-  window.request = {
-    request: request,
-    RequestErrorText: RequestErrorText
+  window.onGetError = function (message) {
+    window.requestData.errorMessage = message;
+    showNotification(errorBlock, message);
+  };
+  window.onPostError = function (message) {
+    window.requestData.errorMessage = message;
+    showNotification(errorBlock, RequestErrorText.FAILED_UPLOAD);
   };
 
 })();
