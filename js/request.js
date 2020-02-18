@@ -26,31 +26,14 @@
     TIMEOUT: 'Время ожидания выполнения запроса превышено.',
     FAILED_UPLOAD: 'Ошибка загрузки объявления'
   };
-  var requestResult = {
+
+  window.requestData = {
     ads: [],
     errorMessage: ''
   };
 
-  window.request = function (method, data) {
+  window.request = function (method, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
-
-    var onSuccess = function (result) {
-      if (method === Request.GET) {
-        createPins(result);
-        requestResult.ads = result;
-        requestResult.errorMessage = '';
-        return;
-      }
-      showNotification(successBlock);
-    };
-    var onError = function (message) {
-      requestResult.errorMessage = message;
-      if (method === Request.POST) {
-        showNotification(errorBlock, RequestErrorText.FAILED_UPLOAD);
-      } else {
-        showNotification(errorBlock, message);
-      }
-    };
 
     xhr.addEventListener('load', function () {
       if (Request.READY_STATE_LOAD && Request.OK_STATUS) {
@@ -58,13 +41,11 @@
       } else {
         onError('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
       }
-      window.requestData = requestResult;
     });
 
     xhr.addEventListener('error', function () {
       onError(RequestErrorText.ERROR);
     });
-
     xhr.addEventListener('timeout', function () {
       onError(RequestErrorText.TIMEOUT);
     });
@@ -73,8 +54,26 @@
     xhr.timeout = Request.TIMEOUT;
     xhr.open(method, methodToUrl[method]);
     xhr.send(data);
+  };
 
-    return requestResult;
+  // --------------------- Обработчики ---------------------
+
+  window.onGetSuccess = function (result) {
+    window.requestData.errorMessage = '';
+    window.requestData.ads = result;
+    createPins(result);
+  };
+  window.onPostSuccess = function () {
+    showNotification(successBlock);
+  };
+
+  window.onGetError = function (message) {
+    window.requestData.errorMessage = message;
+    showNotification(errorBlock, message);
+  };
+  window.onPostError = function (message) {
+    window.requestData.errorMessage = message;
+    showNotification(errorBlock, RequestErrorText.FAILED_UPLOAD);
   };
 
 })();

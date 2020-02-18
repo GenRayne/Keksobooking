@@ -4,13 +4,13 @@
   // --------------------- Импорт ---------------------
 
   var Key = window.util.Key;
-  var map = window.data.map;
   var createCard = window.card.createCard;
 
   // ---------------- Переменные формы ----------------
 
   var ADS_QUANTITY = 5;
 
+  var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
   var mainPinEl = document.querySelector('.map__pin--main');
   var pinTemplate = document.querySelector('#pin').content;
@@ -31,18 +31,18 @@
 
   // =================================================================
 
-  var createPins = function (adObjects) {
+  var createPins = function (ads) {
     clearMap();
 
-    var adsQuantity = adObjects.length > ADS_QUANTITY ? ADS_QUANTITY : adObjects.length;
+    var adsQuantity = ads.length > ADS_QUANTITY ? ADS_QUANTITY : ads.length;
 
     for (var i = 0; i < adsQuantity; i++) {
-      if ('offer' in adObjects[i]) {
-        var newPin = createPin(adObjects[i]);
+      if ('offer' in ads[i]) {
+        var newPin = createPin(ads[i]);
         pinsBlock.appendChild(newPin);
 
         adsData.push({
-          ad: adObjects[i],
+          ad: ads[i],
           pin: newPin,
           card: null
         });
@@ -113,12 +113,10 @@
   // ================== Очистка карты ==================
 
   var clearMap = function () {
-    var pins = pinsBlock.querySelectorAll('.map__pin');
+    var pins = pinsBlock.querySelectorAll('.map__pin:not(.map__pin--main)');
     var cards = map.querySelectorAll('.map__card.popup');
     for (var i = 0; i < pins.length; i++) {
-      if (!pins[i].classList.contains('map__pin--main')) {
-        pinsBlock.removeChild(pins[i]);
-      }
+      pinsBlock.removeChild(pins[i]);
       if (cards[i]) {
         map.removeChild(cards[i]);
       }
@@ -129,6 +127,7 @@
   // Экспорт:
 
   window.pins = {
+    map: map,
     mainPinEl: mainPinEl,
     pinsBlock: pinsBlock,
     Pin: Pin,

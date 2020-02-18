@@ -3,16 +3,16 @@
 (function () {
   // --------------------- Импорт ---------------------
 
-  var ErrorText = window.util.ErrorText;
-
-  var HouseType = window.data.HouseType;
-  var HouseName = window.data.HouseName;
+  var HouseTypeToName = window.util.HouseTypeToName;
 
   // ---------------- Переменные формы ----------------
 
-  var SINGULAR_QUANTITY = 1;
-  var SingularDeclQuantityy = {MIN: 1, MAX: 5};
-  var PLURAL_1 = 11;
+  var NumForDeclension = {
+    SINGULAR: 1,
+    SINGULAR_DECL_MIN: 1,
+    SINGULAR_DECL_MAX: 5,
+    PLURAL_1: 11
+  };
 
   var cardTemplate = document.querySelector('#card').content;
   var cardContainer = cardTemplate.querySelector('.map__card');
@@ -26,7 +26,7 @@
     newCard.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
 
     var placeType = newCard.querySelector('.popup__type');
-    placeType.textContent = choosePlaceType(ad.offer.type);
+    placeType.textContent = HouseTypeToName[ad.offer.type];
     var capacity = newCard.querySelector('.popup__text--capacity');
     capacity.textContent = formCapacityText(ad.offer.rooms, ad.offer.guests);
     var hours = newCard.querySelector('.popup__text--time');
@@ -62,41 +62,21 @@
     return newCard;
   };
 
-  var choosePlaceType = function (place) {
-    var type;
-    switch (place) {
-      case HouseType.BUNGALO:
-        type = HouseName.BUNGALO;
-        break;
-      case HouseType.FLAT:
-        type = HouseName.FLAT;
-        break;
-      case HouseType.HOUSE:
-        type = HouseName.HOUSE;
-        break;
-      case HouseType.PALACE:
-        type = HouseName.PALACE;
-        break;
-      default:
-        throw new Error(ErrorText.TYPE);
-    }
-    return type;
-  };
-
   var formCapacityText = function (roomsQuantity, guestsQuantity) {
     var text = roomsQuantity;
 
-    if (roomsQuantity === SINGULAR_QUANTITY) {
+    if (roomsQuantity === NumForDeclension.SINGULAR) {
       text += ' комната ';
-    } else if (roomsQuantity.toString().slice(-1) > SingularDeclQuantityy.MIN &&
-               roomsQuantity.toString().slice(-1) < SingularDeclQuantityy.MAX) {
+    } else if (roomsQuantity.toString().slice(-1) > NumForDeclension.SINGULAR_DECL_MIN &&
+               roomsQuantity.toString().slice(-1) < NumForDeclension.SINGULAR_DECL_MAX) {
       text += ' комнаты ';
     } else {
       text += ' комнат ';
     }
-    if (guestsQuantity === SINGULAR_QUANTITY || (guestsQuantity > PLURAL_1 &&
-        guestsQuantity.toString().slice(-1) === SINGULAR_QUANTITY &&
-        guestsQuantity.toString().slice(-2) !== PLURAL_1)) {
+    if (guestsQuantity === NumForDeclension.SINGULAR ||
+       (guestsQuantity > NumForDeclension.PLURAL_1 &&
+        guestsQuantity.toString().slice(-1) === NumForDeclension.SINGULAR &&
+        guestsQuantity.toString().slice(-2) !== NumForDeclension.PLURAL_1)) {
       text += 'для ' + guestsQuantity + ' гостя';
     } else {
       text += 'для ' + guestsQuantity + ' гостей';

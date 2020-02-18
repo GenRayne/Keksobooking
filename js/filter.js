@@ -3,11 +3,12 @@
 (function () {
   // --------------------- Импорт ---------------------
 
-  var map = window.data.map;
-  var HouseType = window.data.HouseType;
-  // var RoomsQuantity = window.data.RoomsQuantity;
-  // var GuestsNumber = window.data.GuestsNumber;
+  var map = window.pins.map;
   var createPins = window.pins.createPins;
+  var HouseType = window.util.HouseType;
+  // ------------------ Начатое 7.3 ------------------
+  // var RoomsQuantity = window.util.RoomsQuantity;
+  // var GuestsNumber = window.util.GuestsNumber;
 
   // ---------------- Переменные формы ----------------
 
@@ -26,6 +27,7 @@
     filterFormFeatures
   ];
 
+  // ------------------ Начатое 7.3 ------------------
   // var Price = {
   //   ANY: 'any',
   //   LOW: 'low',
@@ -36,6 +38,7 @@
   //   LOW: 10000,
   //   HIGH: 50000
   // };
+  // ---------------------------------------------------------------
 
   var selected = {
     type: undefined,
@@ -88,6 +91,9 @@
     // ---------------------------------------------------------------
 
     var filteredAds = sameTypeAds;
+
+    // ------------------ Начатая фильтрация для 7.3 ------------------
+
     // .concat(samePriceAds).concat(sameRoomsAds).concat(sameCapacityAds)
     // .filter(function (item, i, arr) {
     //   return arr.indexOf(item) !== i;
@@ -95,6 +101,7 @@
     // .filter(function (item, i, arr) {
     //   return arr.indexOf(item) === i;
     // });
+    // ---------------------------------------------------------------
 
     createPins(filteredAds);
   };
