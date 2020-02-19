@@ -7,15 +7,14 @@
   var ErrorText = window.util.ErrorText;
   var InvalidText = window.util.InvalidText;
 
-  var onGetSuccess = window.onGetSuccess;
-  var onGetError = window.onGetError;
-  var onPostSuccess = window.onPostSuccess;
-  var onPostError = window.onPostError;
+  var showNotification = window.notifications.showNotification;
+  var successBlock = window.notifications.successBlock;
 
   var map = window.pins.map;
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
   var clearMap = window.pins.clearMap;
+  var createPins = window.pins.createPins;
 
   var HouseMinPrice = window.util.HouseMinPrice;
   var RoomsQuantity = window.util.RoomsQuantity;
@@ -24,6 +23,7 @@
 
   var filterForm = window.filter.filterForm;
   var filterFormInputs = window.filter.filterFormInputs;
+  var onRequestError = window.filter.onRequestError;
 
   // ---------------- Переменные формы ----------------
 
@@ -89,7 +89,7 @@
     setDefaultAddressValue(true);
     mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
-    window.request('GET', onGetSuccess, onGetError);
+    window.request('GET', createPins, onRequestError);
   };
 
   var deactivateMap = function () {
@@ -185,9 +185,13 @@
     ev.preventDefault();
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
-      window.request('POST', onPostSuccess, onPostError, adFormData);
+      window.request('POST', onPostSuccess, onRequestError, adFormData);
       deactivateMap();
     }
+  };
+
+  var onPostSuccess = function () {
+    showNotification(successBlock);
   };
 
   // ------------------ Функции для валидации ------------------

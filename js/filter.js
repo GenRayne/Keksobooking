@@ -10,6 +10,9 @@
   // var RoomsQuantity = window.util.RoomsQuantity;
   // var GuestsNumber = window.util.GuestsNumber;
 
+  var showNotification = window.notifications.showNotification;
+  var errorBlock = window.notifications.errorBlock;
+
   // ---------------- Переменные формы ----------------
 
   var filterForm = map.querySelector('.map__filters');
@@ -40,6 +43,8 @@
   // };
   // ---------------------------------------------------------------
 
+  var ads = [];
+
   var selected = {
     type: undefined,
     price: undefined,
@@ -47,11 +52,18 @@
     capacity: undefined
   };
 
+  var onRequestError = function (message) {
+    showNotification(errorBlock, message);
+  };
+  var onRequestSuccess = function (data) {
+    ads = data;
+  };
+
   // =================================================================
 
   var updatePins = function () {
 
-    var sameTypeAds = window.requestData.ads.filter(function (ad) {
+    var sameTypeAds = ads.filter(function (ad) {
       if (!selected.type || selected.type === HouseType.ANY) {
         return true;
       }
@@ -60,7 +72,7 @@
 
     // ------------------ Начатая фильтрация для 7.3 ------------------
 
-    // var samePriceAds = window.requestData.ads.filter(function (ad) {
+    // var samePriceAds = ads.filter(function (ad) {
     //   switch (selected.price) {
     //     case Price.LOW:
     //       return ad.offer.price < PricingStep.LOW;
@@ -74,14 +86,14 @@
     //   }
     // });
 
-    // var sameRoomsAds = window.requestData.ads.filter(function (ad) {
+    // var sameRoomsAds = ads.filter(function (ad) {
     //   if (!selected.rooms || selected.rooms === RoomsQuantity.ANY) {
     //     return true;
     //   }
     //   return ad.offer.rooms === +selected.rooms;
     // });
 
-    // var sameCapacityAds = window.requestData.ads.filter(function (ad) {
+    // var sameCapacityAds = ads.filter(function (ad) {
     //   if (!selected.capacity || selected.capacity === GuestsNumber.ANY) {
     //     return true;
     //   }
@@ -124,6 +136,10 @@
     selected.capacity = filterFormCapacity.value;
     updatePins();
   });
+
+  // =================================================================
+
+  window.request('GET', onRequestSuccess, onRequestError);
 
   // =================================================================
   // Экспорт:

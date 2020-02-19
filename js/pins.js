@@ -31,6 +31,18 @@
 
   // =================================================================
 
+  var createPin = function (ad) {
+    var newPin = pinButton.cloneNode(true);
+
+    newPin.style = 'left: ' + (ad.location.x - Pin.WIDTH / 2) +
+                   'px; top: ' + (ad.location.y - Pin.HEIGHT) + 'px;';
+    var pinImg = newPin.querySelector('img');
+    pinImg.src = ad.author.avatar;
+    pinImg.alt = ad.offer.title;
+
+    return newPin;
+  };
+
   var createPins = function (ads) {
     clearMap();
 
@@ -49,18 +61,6 @@
       }
     }
     linkPinsWithCards();
-  };
-
-  var createPin = function (ad) {
-    var newPin = pinButton.cloneNode(true);
-
-    newPin.style = 'left: ' + (ad.location.x - Pin.WIDTH / 2) +
-                   'px; top: ' + (ad.location.y - Pin.HEIGHT) + 'px;';
-    var pinImg = newPin.querySelector('img');
-    pinImg.src = ad.author.avatar;
-    pinImg.alt = ad.offer.title;
-
-    return newPin;
   };
 
   // ================== Открытие карточек по меткам ==================
