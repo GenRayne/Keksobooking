@@ -119,36 +119,46 @@
     createPins(filteredAds);
   };
 
-  // --------------------- Слушатели ---------------------
+  // --------------------- Обработчики ---------------------
 
-  filterFormType.addEventListener('input', function () {
+  var onTypeChange = window.debounce(function () {
     selected.type = filterFormType.value;
     updatePins();
   });
-  filterFormPrice.addEventListener('input', function () {
+  var onPriceChange = window.debounce(function () {
     selected.price = filterFormPrice.value;
     updatePins();
   });
-  filterFormRooms.addEventListener('input', function () {
+  var onRoomsChange = window.debounce(function () {
     selected.rooms = filterFormRooms.value;
     updatePins();
   });
-  filterFormCapacity.addEventListener('input', function () {
+  var onCapacityChange = window.debounce(function () {
     selected.capacity = filterFormCapacity.value;
     updatePins();
   });
-  filterFeaturesFields.forEach(function (checkbox) {
+  var onFeatureChange = window.debounce(function (checkbox) {
     // Формируем массив выбранных удобств
+    if (checkbox.checked) {
+      selected.features.push(checkbox.value);
+    } else {
+      var i = selected.features.findIndex(function (feature) {
+        return feature === checkbox.value;
+      });
+      selected.features.splice(i, 1);
+    }
+    updatePins();
+  });
+
+  // --------------------- Слушатели ---------------------
+
+  filterFormType.addEventListener('input', onTypeChange);
+  filterFormPrice.addEventListener('input', onPriceChange);
+  filterFormRooms.addEventListener('input', onRoomsChange);
+  filterFormCapacity.addEventListener('input', onCapacityChange);
+  filterFeaturesFields.forEach(function (checkbox) {
     checkbox.addEventListener('change', function () {
-      if (checkbox.checked) {
-        selected.features.push(checkbox.value);
-      } else {
-        var i = selected.features.findIndex(function (feature) {
-          return feature === checkbox.value;
-        });
-        selected.features.splice(i, 1);
-      }
-      updatePins();
+      onFeatureChange(checkbox);
     });
   });
 
