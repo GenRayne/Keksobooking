@@ -10,11 +10,6 @@
     ESCAPE: 'Escape'
   };
 
-  var ErrorText = {
-    TYPE: 'Неверный тип жилья.',
-    ROOMS: 'Неверное количество комнат.',
-    GUESTS: 'Неверное количество гостей.'
-  };
   var InvalidText = {
     EMPTY: 'Это поле обязательно для заполнения.',
     TITLE_LENGTH: 'Длина заголовка должна составлять не менее 30 и не более 100 символов.',
@@ -35,7 +30,7 @@
     'house': 'Дом',
     'palace': 'Дворец'
   };
-  var HouseMinPrice = {
+  var HouseTypeToMinPrice = {
     'bungalo': '0',
     'flat': '1000',
     'house': '5000',
@@ -69,11 +64,10 @@
     Key: Key,
     HouseType: HouseType,
     HouseTypeToName: HouseTypeToName,
-    HouseMinPrice: HouseMinPrice,
+    HouseTypeToMinPrice: HouseTypeToMinPrice,
     RoomsQuantity: RoomsQuantity,
     GuestsNumber: GuestsNumber,
     GuestsOption: GuestsOption,
-    ErrorTexts: ErrorText,
     InvalidText: InvalidText
   };
 })();

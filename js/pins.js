@@ -45,6 +45,7 @@
 
   var createPins = function (ads) {
     clearMap();
+    adsData = [];
 
     var adsQuantity = ads.length > ADS_QUANTITY ? ADS_QUANTITY : ads.length;
 

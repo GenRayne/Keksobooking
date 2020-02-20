@@ -4,7 +4,6 @@
   // --------------------- Импорт ---------------------
 
   var Key = window.util.Key;
-  var ErrorText = window.util.ErrorText;
   var InvalidText = window.util.InvalidText;
 
   var showNotification = window.notifications.showNotification;
@@ -16,7 +15,7 @@
   var clearMap = window.pins.clearMap;
   var createPins = window.pins.createPins;
 
-  var HouseMinPrice = window.util.HouseMinPrice;
+  var HouseTypeToMinPrice = window.util.HouseTypeToMinPrice;
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
   var GuestsOptions = window.util.GuestsOption;
@@ -69,6 +68,10 @@
     adFormSubmitBtn,
     adFormResetBtn
   ];
+
+  var ErrorText = {
+    ROOMS: 'Неверное количество комнат.'
+  };
 
   // ============== Активация карты и работа с формами ==============
 
@@ -203,8 +206,8 @@
   };
 
   var setMinPrice = function () {
-    adFormPrice.min = +HouseMinPrice[adFormType.value];
-    adFormPrice.placeholder = HouseMinPrice[adFormType.value];
+    adFormPrice.min = +HouseTypeToMinPrice[adFormType.value];
+    adFormPrice.placeholder = HouseTypeToMinPrice[adFormType.value];
     return adFormPrice.placeholder;
   };
 
