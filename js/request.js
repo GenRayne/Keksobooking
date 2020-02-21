@@ -1,13 +1,6 @@
 'use strict';
 
 (function () {
-  // --------------------- Импорт ---------------------
-
-  var showNotification = window.notifications.showNotification;
-  var successBlock = window.notifications.successBlock;
-  var errorBlock = window.notifications.errorBlock;
-  var createPins = window.pins.createPins;
-
   // ---------------- Переменные формы ----------------
 
   var Request = {
@@ -44,7 +37,11 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError(RequestErrorText.ERROR);
+      if (method === Request.GET) {
+        onError(RequestErrorText.ERROR);
+      } else {
+        onError(RequestErrorText.FAILED_UPLOAD);
+      }
     });
     xhr.addEventListener('timeout', function () {
       onError(RequestErrorText.TIMEOUT);
@@ -54,26 +51,6 @@
     xhr.timeout = Request.TIMEOUT;
     xhr.open(method, methodToUrl[method]);
     xhr.send(data);
-  };
-
-  // --------------------- Обработчики ---------------------
-
-  window.onGetSuccess = function (result) {
-    window.requestData.errorMessage = '';
-    window.requestData.ads = result;
-    createPins(result);
-  };
-  window.onPostSuccess = function () {
-    showNotification(successBlock);
-  };
-
-  window.onGetError = function (message) {
-    window.requestData.errorMessage = message;
-    showNotification(errorBlock, message);
-  };
-  window.onPostError = function (message) {
-    window.requestData.errorMessage = message;
-    showNotification(errorBlock, RequestErrorText.FAILED_UPLOAD);
   };
 
 })();

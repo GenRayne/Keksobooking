@@ -4,26 +4,25 @@
   // --------------------- Импорт ---------------------
 
   var Key = window.util.Key;
-  var ErrorText = window.util.ErrorText;
   var InvalidText = window.util.InvalidText;
 
-  var onGetSuccess = window.onGetSuccess;
-  var onGetError = window.onGetError;
-  var onPostSuccess = window.onPostSuccess;
-  var onPostError = window.onPostError;
+  var showNotification = window.notifications.showNotification;
+  var successBlock = window.notifications.successBlock;
 
   var map = window.pins.map;
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
   var clearMap = window.pins.clearMap;
+  var createPins = window.pins.createPins;
 
-  var HouseMinPrice = window.util.HouseMinPrice;
+  var HouseTypeToMinPrice = window.util.HouseTypeToMinPrice;
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
   var GuestsOptions = window.util.GuestsOption;
 
   var filterForm = window.filter.filterForm;
   var filterFormInputs = window.filter.filterFormInputs;
+  var onRequestError = window.filter.onRequestError;
 
   // ---------------- Переменные формы ----------------
 
@@ -70,6 +69,10 @@
     adFormResetBtn
   ];
 
+  var ErrorText = {
+    ROOMS: 'Неверное количество комнат.'
+  };
+
   // ============== Активация карты и работа с формами ==============
 
   var onMainPinMousedown = function (ev) {
@@ -89,7 +92,7 @@
     setDefaultAddressValue(true);
     mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
-    window.request('GET', onGetSuccess, onGetError);
+    window.request('GET', createPins, onRequestError);
   };
 
   var deactivateMap = function () {
@@ -185,9 +188,13 @@
     ev.preventDefault();
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
-      window.request('POST', onPostSuccess, onPostError, adFormData);
+      window.request('POST', onPostSuccess, onRequestError, adFormData);
       deactivateMap();
     }
+  };
+
+  var onPostSuccess = function () {
+    showNotification(successBlock);
   };
 
   // ------------------ Функции для валидации ------------------
@@ -199,8 +206,8 @@
   };
 
   var setMinPrice = function () {
-    adFormPrice.min = +HouseMinPrice[adFormType.value];
-    adFormPrice.placeholder = HouseMinPrice[adFormType.value];
+    adFormPrice.min = +HouseTypeToMinPrice[adFormType.value];
+    adFormPrice.placeholder = HouseTypeToMinPrice[adFormType.value];
     return adFormPrice.placeholder;
   };
 
