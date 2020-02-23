@@ -28,8 +28,16 @@
 
   var MAP_WIDTH = map.offsetWidth;
   var imageRegExp = /.jpg$|.jpeg$|.png$/i;
-  var pointerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.HEIGHT);
-  var centerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.ROUND_SIDE / 2);
+  // var pointerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.HEIGHT);
+  // var centerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.ROUND_SIDE / 2);
+  var pointerPinCoords = {
+    x: MAP_WIDTH / 2,
+    y: MainPin.START_Y + MainPin.HEIGHT
+  };
+  var centerPinCoords = {
+    x: MAP_WIDTH / 2,
+    y: MainPin.START_Y + MainPin.ROUND_SIDE / 2
+  };
 
   var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -76,11 +84,16 @@
   // ============== Активация карты и работа с формами ==============
 
   var onMainPinMousedown = function (ev) {
+    ev.preventDefault();
     if (ev.button === Key.LEFT_MOUSE_BTN) {
-      activateMap();
+      if (map.classList.contains('map--faded')) {
+        activateMap();
+      }
+      window.dragMainPin(ev);
     }
   };
   var onMainPinEnterPress = function (ev) {
+    ev.preventDefault();
     if (ev.key === Key.ENTER) {
       activateMap();
     }
@@ -90,7 +103,6 @@
     map.classList.remove('map--faded');
     enableForms();
     setDefaultAddressValue(true);
-    mainPinEl.removeEventListener('mousedown', onMainPinMousedown);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
     window.request('GET', createPins, onRequestError);
   };
@@ -102,6 +114,8 @@
     invalidTitleMessageBox.classList.add('hidden');
     invalidPriceMessageBox.classList.add('hidden');
     clearMap();
+    mainPinEl.style.left = (centerPinCoords.x - MainPin.ROUND_SIDE / 2) + 'px';
+    mainPinEl.style.top = (centerPinCoords.y - MainPin.ROUND_SIDE / 2) + 'px';
     map.classList.add('map--faded');
   };
 
@@ -127,7 +141,9 @@
   };
 
   var setDefaultAddressValue = function (isActive) {
-    adFormAddress.value = isActive ? pointerPinCoords : centerPinCoords;
+    adFormAddress.value = isActive ?
+      pointerPinCoords.x + ', ' + pointerPinCoords.y
+      : centerPinCoords.x + ', ' + centerPinCoords.y;
   };
 
   // ======================= Валидация формы =======================
