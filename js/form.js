@@ -9,16 +9,19 @@
   var showNotification = window.notifications.showNotification;
   var successBlock = window.notifications.successBlock;
 
+  var HouseTypeToMinPrice = window.util.HouseTypeToMinPrice;
+  var RoomsQuantity = window.util.RoomsQuantity;
+  var GuestsNumber = window.util.GuestsNumber;
+  var GuestsOptions = window.util.GuestsOption;
+
   var map = window.pins.map;
   var MainPin = window.pins.MainPin;
   var mainPinEl = window.pins.mainPinEl;
   var clearMap = window.pins.clearMap;
   var createPins = window.pins.createPins;
 
-  var HouseTypeToMinPrice = window.util.HouseTypeToMinPrice;
-  var RoomsQuantity = window.util.RoomsQuantity;
-  var GuestsNumber = window.util.GuestsNumber;
-  var GuestsOptions = window.util.GuestsOption;
+  var adForm = window.mainPin.adForm;
+  var adFormAddress = window.mainPin.adFormAddress;
 
   var filterForm = window.filter.filterForm;
   var filterFormInputs = window.filter.filterFormInputs;
@@ -26,24 +29,15 @@
 
   // ---------------- Переменные формы ----------------
 
-  var MAP_WIDTH = map.offsetWidth;
   var imageRegExp = /.jpg$|.jpeg$|.png$/i;
-  // var pointerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.HEIGHT);
-  // var centerPinCoords = (MAP_WIDTH / 2) + ', ' + (MainPin.START_Y + MainPin.ROUND_SIDE / 2);
-  var pointerPinCoords = {
-    x: MAP_WIDTH / 2,
-    y: MainPin.START_Y + MainPin.HEIGHT
-  };
   var centerPinCoords = {
-    x: MAP_WIDTH / 2,
-    y: MainPin.START_Y + MainPin.ROUND_SIDE / 2
+    x: mainPinEl.offsetLeft + MainPin.ROUND_SIDE / 2,
+    y: mainPinEl.offsetTop + MainPin.ROUND_SIDE / 2
   };
 
-  var adForm = document.querySelector('.ad-form');
   var adFormAvatar = adForm.querySelector('#avatar');
   var adFormAvatarLabel = adForm.querySelector('.ad-form-header__drop-zone');
   var adFormTitle = adForm.querySelector('#title');
-  var adFormAddress = adForm.querySelector('#address');
   var adFormType = adForm.querySelector('#type');
   var adFormPrice = adForm.querySelector('#price');
   var adFormTimein = adForm.querySelector('#timein');
@@ -102,7 +96,6 @@
   var activateMap = function () {
     map.classList.remove('map--faded');
     enableForms();
-    setDefaultAddressValue(true);
     mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
     window.request('GET', createPins, onRequestError);
   };
@@ -140,10 +133,8 @@
     }
   };
 
-  var setDefaultAddressValue = function (isActive) {
-    adFormAddress.value = isActive ?
-      pointerPinCoords.x + ', ' + pointerPinCoords.y
-      : centerPinCoords.x + ', ' + centerPinCoords.y;
+  var setDefaultAddressValue = function () {
+    adFormAddress.value = centerPinCoords.x + ', ' + centerPinCoords.y;
   };
 
   // ======================= Валидация формы =======================

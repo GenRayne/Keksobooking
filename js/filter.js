@@ -171,6 +171,7 @@
 
   window.filter = {
     filterFormInputs: filterFormInputs,
-    filterForm: filterForm
+    filterForm: filterForm,
+    onRequestError: onRequestError
   };
 })();
