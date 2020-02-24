@@ -10,14 +10,16 @@
     READY_STATE_LOAD: 4,
     OK_STATUS: 200
   };
-  var methodToUrl = {
-    'GET': 'https://js.dump.academy/keksobooking/data',
-    'POST': 'https://js.dump.academy/keksobooking',
-  };
+
   var RequestErrorText = {
     ERROR: 'Ошибка соединения. Проверьте подключение к сети',
     TIMEOUT: 'Время ожидания выполнения запроса превышено',
     FAILED_UPLOAD: 'Ошибка загрузки объявления'
+  };
+
+  var methodToUrl = {
+    'GET': 'https://js.dump.academy/keksobooking/data',
+    'POST': 'https://js.dump.academy/keksobooking',
   };
 
   // =================================================================

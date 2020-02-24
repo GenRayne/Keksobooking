@@ -3,7 +3,7 @@
 (function () {
   // --------------------- Импорт ---------------------
 
-  var HouseTypeToName = window.util.HouseTypeToName;
+  var houseTypeToName = window.util.houseTypeToName;
 
   // ---------------- Переменные модуля ----------------
 
@@ -26,7 +26,7 @@
     newCard.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
 
     var placeType = newCard.querySelector('.popup__type');
-    placeType.textContent = HouseTypeToName[ad.offer.type];
+    placeType.textContent = houseTypeToName[ad.offer.type];
     var capacity = newCard.querySelector('.popup__text--capacity');
     capacity.textContent = formCapacityText(ad.offer.rooms, ad.offer.guests);
     var hours = newCard.querySelector('.popup__text--time');

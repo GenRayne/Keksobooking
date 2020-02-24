@@ -28,34 +28,50 @@
     if (message) {
       errorMessage.textContent = message;
     }
-    block.classList.remove('hidden');
-    if (block === Notification.ERROR && !document.querySelector('.error')) {
-      mainBlock.appendChild(errorBlock);
-    }
-    if (block === Notification.SUCCESS && !document.querySelector('.success')) {
-      mainBlock.appendChild(successBlock);
+
+    if (block.classList.contains('hidden')) {
+      block.classList.remove('hidden');
+    } else {
+      mainBlock.appendChild(block);
     }
 
-    var onBlockClose = function (evt) {
-      if (evt.button === Key.LEFT_MOUSE_BTN || evt.key === Key.ESCAPE) {
+    // ------------------ Обработчики ------------------
+
+    var onButtonClick = function (evt) {
+      if (evt.button === Key.LEFT_MOUSE_BTN) {
         block.classList.add('hidden');
-        document.removeEventListener('keydown', onBlockClose);
-        if (block === Notification.ERROR) {
-          tryAgainBtn.removeEventListener('click', onBlockClose);
-        }
+        removeListeners();
       }
     };
+
+    var onEscPress = function (evt) {
+      if (evt.key === Key.ESCAPE) {
+        block.classList.add('hidden');
+        removeListeners();
+      }
+    };
+
     var onOutsideClick = function (evt) {
       if (evt.target !== errorMessage && evt.target !== successMessage) {
         block.classList.add('hidden');
-        block.removeEventListener('click', onOutsideClick);
+        removeListeners();
       }
     };
 
-    document.addEventListener('keydown', onBlockClose);
+    // ------------------------------------------------
+
+    var removeListeners = function () {
+      block.removeEventListener('click', onOutsideClick);
+      document.removeEventListener('keydown', onEscPress);
+      if (block === Notification.ERROR) {
+        tryAgainBtn.removeEventListener('click', onButtonClick);
+      }
+    };
+
+    document.addEventListener('keydown', onEscPress);
     block.addEventListener('click', onOutsideClick);
     if (block === Notification.ERROR) {
-      tryAgainBtn.addEventListener('click', onBlockClose);
+      tryAgainBtn.addEventListener('click', onButtonClick);
     }
   };
 

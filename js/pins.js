@@ -12,7 +12,7 @@
 
   var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
-  var mainPinElement = document.querySelector('.map__pin--main');
+  var mainPin = document.querySelector('.map__pin--main');
   var pinTemplate = document.querySelector('#pin').content;
   var pinButton = pinTemplate.querySelector('.map__pin');
   var filterContainer = map.querySelector('.map__filters-container');
@@ -43,9 +43,7 @@
     clearMap();
     adsData = [];
 
-    var adsQuantity = ads.length > ADS_QUANTITY ? ADS_QUANTITY : ads.length;
-
-    for (var i = 0; i < adsQuantity; i++) {
+    for (var i = 0; i < Math.min(ads.length, ADS_QUANTITY); i++) {
       if ('offer' in ads[i]) {
         var newPin = createPin(ads[i]);
         pinsBlock.appendChild(newPin);
@@ -75,23 +73,26 @@
   };
 
   var openCard = function (pin) {
+    var closeCard = function () {
+      card.classList.add('hidden');
+      document.removeEventListener('keydown', onPopupEscPress);
+    };
+
     var onPopupEscPress = function (evt) {
       if (evt.key === Key.ESCAPE) {
         closeCard();
       }
-    };
-    var closeCard = function () {
-      card.classList.add('hidden');
-      document.removeEventListener('keydown', onPopupEscPress);
     };
 
     var cards = map.querySelectorAll('.map__card');
     for (var i = 0; i < cards.length; i++) {
       cards[i].classList.add('hidden');
     }
+
     var adItem = adsData.find(function (item) {
       return item.pin === pin;
     });
+
     var card = (adItem.card) ? adItem.card : createCard(adItem.ad);
 
     if (!adItem.card) {
@@ -102,7 +103,7 @@
     }
 
     card.querySelector('.popup__close').addEventListener('click', function () {
-      card.classList.add('hidden');
+      closeCard();
     });
     document.addEventListener('keydown', onPopupEscPress);
   };
@@ -125,7 +126,7 @@
 
   window.pins = {
     map: map,
-    mainPinElement: mainPinElement,
+    mainPin: mainPin,
     pinsBlock: pinsBlock,
     Pin: Pin,
     Key: Key,

@@ -3,8 +3,7 @@
 (function () {
   // --------------------- Импорт ---------------------
   var map = window.pins.map;
-  // var MainPin = window.pins.MainPin;
-  var mainPinElement = window.pins.mainPinElement;
+  var mainPin = window.pins.mainPin;
 
   // ---------------- Переменные модуля ----------------
 
@@ -25,7 +24,7 @@
 
   // =================================================================
 
-  var limitXDrag = function (coord, min, max) {
+  var limitDrag = function (coord, min, max) {
     if (coord < min) {
       return min;
     } else if (coord > max) {
@@ -34,7 +33,7 @@
     return coord;
   };
 
-  var getAddressPointerCoords = function (x, y) {
+  var getAddressCoords = function (x, y) {
     var pointerCoords = {
       x: x + MainPin.ROUND_SIDE / 2,
       y: y + MainPin.HEIGHT
@@ -64,13 +63,13 @@
       };
 
       var coords = {
-        x: limitXDrag((mainPinElement.offsetLeft - shift.x), minLeft, maxLeft),
-        y: limitXDrag((mainPinElement.offsetTop - shift.y), MIN_TOP, MAX_TOP)
+        x: limitDrag((mainPin.offsetLeft - shift.x), minLeft, maxLeft),
+        y: limitDrag((mainPin.offsetTop - shift.y), MIN_TOP, MAX_TOP)
       };
 
-      mainPinElement.style.left = coords.x + 'px';
-      mainPinElement.style.top = coords.y + 'px';
-      getAddressPointerCoords(coords.x, coords.y);
+      mainPin.style.left = coords.x + 'px';
+      mainPin.style.top = coords.y + 'px';
+      getAddressCoords(coords.x, coords.y);
     };
 
     var onMouseUp = function (upEvt) {
@@ -78,10 +77,10 @@
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       var pinCoords = {
-        x: mainPinElement.offsetLeft,
-        y: mainPinElement.offsetTop
+        x: mainPin.offsetLeft,
+        y: mainPin.offsetTop
       };
-      getAddressPointerCoords(pinCoords.x, pinCoords.y);
+      getAddressCoords(pinCoords.x, pinCoords.y);
     };
 
     document.addEventListener('mousemove', onMouseMove);

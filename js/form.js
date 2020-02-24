@@ -5,7 +5,7 @@
 
   var Key = window.util.Key;
   var InvalidText = window.util.InvalidText;
-  var HouseTypeToMinPrice = window.util.HouseTypeToMinPrice;
+  var houseTypeToMinPrice = window.util.houseTypeToMinPrice;
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
   var GuestsOption = window.util.GuestsOption;
@@ -17,7 +17,7 @@
   var successBlock = window.notification.successBlock;
 
   var map = window.pins.map;
-  var mainPinElement = window.pins.mainPinElement;
+  var mainPin = window.pins.mainPin;
   var clearMap = window.pins.clearMap;
   var createPins = window.pins.createPins;
 
@@ -30,11 +30,12 @@
 
   // ---------------- Переменные модуля ----------------
 
-  var imageRegExp = /.jpg$|.jpeg$|.png$/i;
-  var centerPinCoords = {
-    x: mainPinElement.offsetLeft + MainPin.ROUND_SIDE / 2,
-    y: mainPinElement.offsetTop + MainPin.ROUND_SIDE / 2
+  var CenterPinCoord = {
+    X: mainPin.offsetLeft + MainPin.ROUND_SIDE / 2,
+    Y: mainPin.offsetTop + MainPin.ROUND_SIDE / 2
   };
+
+  var imageRegExp = /.jpg$|.jpeg$|.png$/i;
 
   var adFormAvatar = adForm.querySelector('#avatar');
   var adFormAvatarLabel = adForm.querySelector('.ad-form-header__drop-zone');
@@ -96,7 +97,7 @@
   var activateMap = function () {
     map.classList.remove('map--faded');
     enableForms();
-    mainPinElement.removeEventListener('keydown', onMainPinEnterPress);
+    mainPin.removeEventListener('keydown', onMainPinEnterPress);
     window.request('GET', onRequestSuccess, onRequestError);
   };
 
@@ -107,8 +108,8 @@
     invalidTitleMessageBox.classList.add('hidden');
     invalidPriceMessageBox.classList.add('hidden');
     clearMap();
-    mainPinElement.style.left = (centerPinCoords.x - MainPin.ROUND_SIDE / 2) + 'px';
-    mainPinElement.style.top = (centerPinCoords.y - MainPin.ROUND_SIDE / 2) + 'px';
+    mainPin.style.left = (CenterPinCoord.X - MainPin.ROUND_SIDE / 2) + 'px';
+    mainPin.style.top = (CenterPinCoord.Y - MainPin.ROUND_SIDE / 2) + 'px';
     map.classList.add('map--faded');
   };
 
@@ -121,8 +122,8 @@
     changeInputsState(adFormInputs, true);
     changeInputsState(filterFormInputs, true);
     setDefaultAddressValue();
-    mainPinElement.addEventListener('mousedown', onMainPinMousedown);
-    mainPinElement.addEventListener('keydown', onMainPinEnterPress);
+    mainPin.addEventListener('mousedown', onMainPinMousedown);
+    mainPin.addEventListener('keydown', onMainPinEnterPress);
   };
 
   var changeInputsState = function (inputs, isDisabled) {
@@ -133,7 +134,7 @@
   };
 
   var setDefaultAddressValue = function () {
-    adFormAddress.value = centerPinCoords.x + ', ' + centerPinCoords.y;
+    adFormAddress.value = CenterPinCoord.X + ', ' + CenterPinCoord.Y;
   };
 
   var onRequestSuccess = function (data) {
@@ -217,8 +218,8 @@
   };
 
   var setMinPrice = function () {
-    adFormPrice.min = +HouseTypeToMinPrice[adFormType.value];
-    adFormPrice.placeholder = HouseTypeToMinPrice[adFormType.value];
+    adFormPrice.min = +houseTypeToMinPrice[adFormType.value];
+    adFormPrice.placeholder = houseTypeToMinPrice[adFormType.value];
     return adFormPrice.placeholder;
   };
 
