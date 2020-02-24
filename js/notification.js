@@ -5,9 +5,9 @@
 
   var Key = window.util.Key;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
 
-  var mainContent = document.querySelector('main');
+  var mainBlock = document.querySelector('main');
   var errorTemplate = document.querySelector('#error').content;
   var errorBlock = errorTemplate.querySelector('.error').cloneNode(true);
   var errorMessage = errorBlock.querySelector('.error__message');
@@ -30,14 +30,14 @@
     }
     block.classList.remove('hidden');
     if (block === Notification.ERROR && !document.querySelector('.error')) {
-      mainContent.appendChild(errorBlock);
+      mainBlock.appendChild(errorBlock);
     }
     if (block === Notification.SUCCESS && !document.querySelector('.success')) {
-      mainContent.appendChild(successBlock);
+      mainBlock.appendChild(successBlock);
     }
 
-    var onBlockClose = function (ev) {
-      if (ev.button === Key.LEFT_MOUSE_BTN || ev.key === Key.ESCAPE) {
+    var onBlockClose = function (evt) {
+      if (evt.button === Key.LEFT_MOUSE_BTN || evt.key === Key.ESCAPE) {
         block.classList.add('hidden');
         document.removeEventListener('keydown', onBlockClose);
         if (block === Notification.ERROR) {
@@ -45,8 +45,8 @@
         }
       }
     };
-    var onOutsideClick = function (ev) {
-      if (ev.target !== errorMessage && ev.target !== successMessage) {
+    var onOutsideClick = function (evt) {
+      if (evt.target !== errorMessage && evt.target !== successMessage) {
         block.classList.add('hidden');
         block.removeEventListener('click', onOutsideClick);
       }
@@ -62,7 +62,7 @@
   // =================================================================
   // Экспорт:
 
-  window.notifications = {
+  window.notification = {
     showNotification: showNotification,
     errorBlock: errorBlock,
     successBlock: successBlock

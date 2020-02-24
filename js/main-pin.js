@@ -3,12 +3,18 @@
 (function () {
   // --------------------- Импорт ---------------------
   var map = window.pins.map;
-  var MainPin = window.pins.MainPin;
-  var mainPinEl = window.pins.mainPinEl;
+  // var MainPin = window.pins.MainPin;
+  var mainPinElement = window.pins.mainPinElement;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
 
   var MAP_WIDTH = map.offsetWidth;
+
+  var MainPin = {
+    ROUND_SIDE: 62,
+    HEIGHT: 84
+  };
+
   var MIN_Y = 130;
   var MAX_Y = 630;
   var MIN_TOP = MIN_Y - MainPin.HEIGHT;
@@ -36,44 +42,44 @@
     adFormAddress.value = pointerCoords.x + ', ' + pointerCoords.y;
   };
 
-  window.dragMainPin = function (ev) {
+  window.dragMainPin = function (evt) {
     var minLeft = -MainPin.ROUND_SIDE / 2;
     var maxLeft = minLeft + MAP_WIDTH;
     var startCoords = {
-      x: ev.clientX,
-      y: ev.clientY
+      x: evt.clientX,
+      y: evt.clientY
     };
 
-    var onMouseMove = function (moveEv) {
-      moveEv.preventDefault();
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
 
       var shift = {
-        x: startCoords.x - moveEv.clientX,
-        y: startCoords.y - moveEv.clientY
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
       };
 
       startCoords = {
-        x: moveEv.clientX,
-        y: moveEv.clientY
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
       };
 
       var coords = {
-        x: limitXDrag((mainPinEl.offsetLeft - shift.x), minLeft, maxLeft),
-        y: limitXDrag((mainPinEl.offsetTop - shift.y), MIN_TOP, MAX_TOP)
+        x: limitXDrag((mainPinElement.offsetLeft - shift.x), minLeft, maxLeft),
+        y: limitXDrag((mainPinElement.offsetTop - shift.y), MIN_TOP, MAX_TOP)
       };
 
-      mainPinEl.style.left = coords.x + 'px';
-      mainPinEl.style.top = coords.y + 'px';
+      mainPinElement.style.left = coords.x + 'px';
+      mainPinElement.style.top = coords.y + 'px';
       getAddressPointerCoords(coords.x, coords.y);
     };
 
-    var onMouseUp = function (upEv) {
-      upEv.preventDefault();
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       var pinCoords = {
-        x: mainPinEl.offsetLeft,
-        y: mainPinEl.offsetTop
+        x: mainPinElement.offsetLeft,
+        y: mainPinElement.offsetTop
       };
       getAddressPointerCoords(pinCoords.x, pinCoords.y);
     };
@@ -84,6 +90,7 @@
 
   window.mainPin = {
     adForm: adForm,
-    adFormAddress: adFormAddress
+    adFormAddress: adFormAddress,
+    MainPin: MainPin
   };
 })();

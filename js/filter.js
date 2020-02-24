@@ -10,10 +10,21 @@
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
 
-  var showNotification = window.notifications.showNotification;
-  var errorBlock = window.notifications.errorBlock;
+  var showNotification = window.notification.showNotification;
+  var errorBlock = window.notification.errorBlock;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
+
+  var Price = {
+    ANY: 'any',
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high'
+  };
+  var PricingStep = {
+    LOW: 10000,
+    HIGH: 50000
+  };
 
   var filterForm = map.querySelector('.map__filters');
   var filterFormType = filterForm.querySelector('#housing-type');
@@ -31,16 +42,6 @@
     filterFormFeatures
   ];
 
-  var Price = {
-    ANY: 'any',
-    LOW: 'low',
-    MIDDLE: 'middle',
-    HIGH: 'high'
-  };
-  var PricingStep = {
-    LOW: 10000,
-    HIGH: 50000
-  };
   // ---------------------------------------------------------------
 
   var ads = [];

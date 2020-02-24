@@ -68,6 +68,8 @@
     RoomsQuantity: RoomsQuantity,
     GuestsNumber: GuestsNumber,
     GuestsOption: GuestsOption,
-    InvalidText: InvalidText
+    InvalidText: InvalidText,
+    adForm: adForm,
+    adFormCapacity: adFormCapacity
   };
 })();

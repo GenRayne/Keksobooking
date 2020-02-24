@@ -5,34 +5,35 @@
 
   var Key = window.util.Key;
   var InvalidText = window.util.InvalidText;
-
-  var showNotification = window.notifications.showNotification;
-  var successBlock = window.notifications.successBlock;
-
   var HouseTypeToMinPrice = window.util.HouseTypeToMinPrice;
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
-  var GuestsOptions = window.util.GuestsOption;
+  var GuestsOption = window.util.GuestsOption;
+
+  var adForm = window.util.adForm;
+  var adFormCapacity = window.util.adFormCapacity;
+
+  var showNotification = window.notification.showNotification;
+  var successBlock = window.notification.successBlock;
 
   var map = window.pins.map;
-  var MainPin = window.pins.MainPin;
-  var mainPinEl = window.pins.mainPinEl;
+  var mainPinElement = window.pins.mainPinElement;
   var clearMap = window.pins.clearMap;
   var createPins = window.pins.createPins;
 
-  var adForm = window.mainPin.adForm;
+  var MainPin = window.mainPin.MainPin;
   var adFormAddress = window.mainPin.adFormAddress;
 
   var filterForm = window.filter.filterForm;
   var filterFormInputs = window.filter.filterFormInputs;
   var onRequestError = window.filter.onRequestError;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
 
   var imageRegExp = /.jpg$|.jpeg$|.png$/i;
   var centerPinCoords = {
-    x: mainPinEl.offsetLeft + MainPin.ROUND_SIDE / 2,
-    y: mainPinEl.offsetTop + MainPin.ROUND_SIDE / 2
+    x: mainPinElement.offsetLeft + MainPin.ROUND_SIDE / 2,
+    y: mainPinElement.offsetTop + MainPin.ROUND_SIDE / 2
   };
 
   var adFormAvatar = adForm.querySelector('#avatar');
@@ -43,7 +44,6 @@
   var adFormTimein = adForm.querySelector('#timein');
   var adFormTimeout = adForm.querySelector('#timeout');
   var adFormRooms = adForm.querySelector('#room_number');
-  var adFormCapacity = adForm.querySelector('#capacity');
   var adFormFeatures = adForm.querySelector('.features');
   var adFormDescription = adForm.querySelector('#description');
   var adFormPhotos = adForm.querySelector('#images');
@@ -77,18 +77,18 @@
 
   // ============== Активация карты и работа с формами ==============
 
-  var onMainPinMousedown = function (ev) {
-    ev.preventDefault();
-    if (ev.button === Key.LEFT_MOUSE_BTN) {
+  var onMainPinMousedown = function (evt) {
+    evt.preventDefault();
+    if (evt.button === Key.LEFT_MOUSE_BTN) {
       if (map.classList.contains('map--faded')) {
         activateMap();
       }
-      window.dragMainPin(ev);
+      window.dragMainPin(evt);
     }
   };
-  var onMainPinEnterPress = function (ev) {
-    ev.preventDefault();
-    if (ev.key === Key.ENTER) {
+  var onMainPinEnterPress = function (evt) {
+    evt.preventDefault();
+    if (evt.key === Key.ENTER) {
       activateMap();
     }
   };
@@ -96,8 +96,8 @@
   var activateMap = function () {
     map.classList.remove('map--faded');
     enableForms();
-    mainPinEl.removeEventListener('keydown', onMainPinEnterPress);
-    window.request('GET', createPins, onRequestError);
+    mainPinElement.removeEventListener('keydown', onMainPinEnterPress);
+    window.request('GET', onRequestSuccess, onRequestError);
   };
 
   var deactivateMap = function () {
@@ -107,34 +107,38 @@
     invalidTitleMessageBox.classList.add('hidden');
     invalidPriceMessageBox.classList.add('hidden');
     clearMap();
-    mainPinEl.style.left = (centerPinCoords.x - MainPin.ROUND_SIDE / 2) + 'px';
-    mainPinEl.style.top = (centerPinCoords.y - MainPin.ROUND_SIDE / 2) + 'px';
+    mainPinElement.style.left = (centerPinCoords.x - MainPin.ROUND_SIDE / 2) + 'px';
+    mainPinElement.style.top = (centerPinCoords.y - MainPin.ROUND_SIDE / 2) + 'px';
     map.classList.add('map--faded');
   };
 
   var enableForms = function () {
     adForm.classList.remove('ad-form--disabled');
     changeInputsState(adFormInputs);
-    changeInputsState(filterFormInputs);
   };
   var disableForms = function () {
     adForm.classList.add('ad-form--disabled');
     changeInputsState(adFormInputs, true);
     changeInputsState(filterFormInputs, true);
     setDefaultAddressValue();
-    mainPinEl.addEventListener('mousedown', onMainPinMousedown);
-    mainPinEl.addEventListener('keydown', onMainPinEnterPress);
+    mainPinElement.addEventListener('mousedown', onMainPinMousedown);
+    mainPinElement.addEventListener('keydown', onMainPinEnterPress);
   };
 
-  var changeInputsState = function (inputsArr, isDisabled) {
-    for (var i = 0; i < inputsArr.length; i++) {
-      inputsArr[i].disabled = isDisabled;
-      markAsValid(inputsArr[i]);
+  var changeInputsState = function (inputs, isDisabled) {
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].disabled = isDisabled;
+      markAsValid(inputs[i]);
     }
   };
 
   var setDefaultAddressValue = function () {
     adFormAddress.value = centerPinCoords.x + ', ' + centerPinCoords.y;
+  };
+
+  var onRequestSuccess = function (data) {
+    createPins(data);
+    changeInputsState(filterFormInputs);
   };
 
   // ======================= Валидация формы =======================
@@ -156,15 +160,15 @@
     switch (adFormRooms.value) {
       case RoomsQuantity[1]:
         changeCapacityOptionsState(true);
-        GuestsOptions[1].disabled = false;
+        GuestsOption[1].disabled = false;
         if (adFormCapacity.value !== GuestsNumber[1]) {
           adFormCapacity.value = GuestsNumber[1];
         }
         break;
       case RoomsQuantity[2]:
         changeCapacityOptionsState(true);
-        GuestsOptions[1].disabled = false;
-        GuestsOptions[2].disabled = false;
+        GuestsOption[1].disabled = false;
+        GuestsOption[2].disabled = false;
         if (adFormCapacity.value !== GuestsNumber[1]
             && adFormCapacity.value !== GuestsNumber[2]) {
           adFormCapacity.value = GuestsNumber[2];
@@ -172,14 +176,14 @@
         break;
       case RoomsQuantity[3]:
         changeCapacityOptionsState(false);
-        GuestsOptions[0].disabled = true;
+        GuestsOption[0].disabled = true;
         if (adFormCapacity.value === GuestsNumber[0]) {
           adFormCapacity.value = GuestsNumber[3];
         }
         break;
       case RoomsQuantity[100]:
         changeCapacityOptionsState(true);
-        GuestsOptions[0].disabled = false;
+        GuestsOption[0].disabled = false;
         if (adFormCapacity.value !== GuestsNumber[0]) {
           adFormCapacity.value = GuestsNumber[0];
         }
@@ -189,10 +193,10 @@
     }
   };
 
-  var onAdFormSubmit = function (ev) {
+  var onAdFormSubmit = function (evt) {
     adFormTitle.removeEventListener('input', onTitleInput);
     adFormPrice.removeEventListener('input', onPriceInput);
-    ev.preventDefault();
+    evt.preventDefault();
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
       window.request('POST', onPostSuccess, onRequestError, adFormData);
@@ -311,8 +315,8 @@
   adFormRooms.addEventListener('change', onRoomsChange);
   adForm.addEventListener('submit', onAdFormSubmit);
 
-  adFormResetBtn.addEventListener('click', function (ev) {
-    ev.preventDefault();
+  adFormResetBtn.addEventListener('click', function (evt) {
+    evt.preventDefault();
     deactivateMap();
   });
 })();

@@ -6,13 +6,13 @@
   var Key = window.util.Key;
   var createCard = window.card.createCard;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
 
   var ADS_QUANTITY = 5;
 
   var map = document.querySelector('.map');
   var pinsBlock = map.querySelector('.map__pins');
-  var mainPinEl = document.querySelector('.map__pin--main');
+  var mainPinElement = document.querySelector('.map__pin--main');
   var pinTemplate = document.querySelector('#pin').content;
   var pinButton = pinTemplate.querySelector('.map__pin');
   var filterContainer = map.querySelector('.map__filters-container');
@@ -20,11 +20,6 @@
   var Pin = {
     WIDTH: 50,
     HEIGHT: 70,
-  };
-  var MainPin = {
-    ROUND_SIDE: 62,
-    HEIGHT: 84,
-    START_Y: parseInt(window.getComputedStyle(mainPinEl).top, 10)
   };
 
   var adsData = [];
@@ -34,8 +29,9 @@
   var createPin = function (ad) {
     var newPin = pinButton.cloneNode(true);
 
-    newPin.style = 'left: ' + (ad.location.x - Pin.WIDTH / 2) +
-                   'px; top: ' + (ad.location.y - Pin.HEIGHT) + 'px;';
+    newPin.style.left = (ad.location.x - Pin.WIDTH / 2) + 'px';
+    newPin.style.top = (ad.location.y - Pin.HEIGHT) + 'px';
+
     var pinImg = newPin.querySelector('img');
     pinImg.src = ad.author.avatar;
     pinImg.alt = ad.offer.title;
@@ -79,8 +75,8 @@
   };
 
   var openCard = function (pin) {
-    var onPopupEscPress = function (ev) {
-      if (ev.key === Key.ESCAPE) {
+    var onPopupEscPress = function (evt) {
+      if (evt.key === Key.ESCAPE) {
         closeCard();
       }
     };
@@ -129,10 +125,9 @@
 
   window.pins = {
     map: map,
-    mainPinEl: mainPinEl,
+    mainPinElement: mainPinElement,
     pinsBlock: pinsBlock,
     Pin: Pin,
-    MainPin: MainPin,
     Key: Key,
     createPins: createPins,
     clearMap: clearMap
