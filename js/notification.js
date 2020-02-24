@@ -5,9 +5,9 @@
 
   var Key = window.util.Key;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
 
-  var mainContent = document.querySelector('main');
+  var mainBlock = document.querySelector('main');
   var errorTemplate = document.querySelector('#error').content;
   var errorBlock = errorTemplate.querySelector('.error').cloneNode(true);
   var errorMessage = errorBlock.querySelector('.error__message');
@@ -28,41 +28,57 @@
     if (message) {
       errorMessage.textContent = message;
     }
-    block.classList.remove('hidden');
-    if (block === Notification.ERROR && !document.querySelector('.error')) {
-      mainContent.appendChild(errorBlock);
-    }
-    if (block === Notification.SUCCESS && !document.querySelector('.success')) {
-      mainContent.appendChild(successBlock);
+
+    if (block.classList.contains('hidden')) {
+      block.classList.remove('hidden');
+    } else {
+      mainBlock.appendChild(block);
     }
 
-    var onBlockClose = function (ev) {
-      if (ev.button === Key.LEFT_MOUSE_BTN || ev.key === Key.ESCAPE) {
+    // ------------------ Обработчики ------------------
+
+    var onButtonClick = function (evt) {
+      if (evt.button === Key.LEFT_MOUSE_BTN) {
         block.classList.add('hidden');
-        document.removeEventListener('keydown', onBlockClose);
-        if (block === Notification.ERROR) {
-          tryAgainBtn.removeEventListener('click', onBlockClose);
-        }
-      }
-    };
-    var onOutsideClick = function (ev) {
-      if (ev.target !== errorMessage && ev.target !== successMessage) {
-        block.classList.add('hidden');
-        block.removeEventListener('click', onOutsideClick);
+        removeListeners();
       }
     };
 
-    document.addEventListener('keydown', onBlockClose);
+    var onEscPress = function (evt) {
+      if (evt.key === Key.ESCAPE) {
+        block.classList.add('hidden');
+        removeListeners();
+      }
+    };
+
+    var onOutsideClick = function (evt) {
+      if (evt.target !== errorMessage && evt.target !== successMessage) {
+        block.classList.add('hidden');
+        removeListeners();
+      }
+    };
+
+    // ------------------------------------------------
+
+    var removeListeners = function () {
+      block.removeEventListener('click', onOutsideClick);
+      document.removeEventListener('keydown', onEscPress);
+      if (block === Notification.ERROR) {
+        tryAgainBtn.removeEventListener('click', onButtonClick);
+      }
+    };
+
+    document.addEventListener('keydown', onEscPress);
     block.addEventListener('click', onOutsideClick);
     if (block === Notification.ERROR) {
-      tryAgainBtn.addEventListener('click', onBlockClose);
+      tryAgainBtn.addEventListener('click', onButtonClick);
     }
   };
 
   // =================================================================
   // Экспорт:
 
-  window.notifications = {
+  window.notification = {
     showNotification: showNotification,
     errorBlock: errorBlock,
     successBlock: successBlock

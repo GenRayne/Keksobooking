@@ -10,10 +10,22 @@
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
 
-  var showNotification = window.notifications.showNotification;
-  var errorBlock = window.notifications.errorBlock;
+  var showNotification = window.notification.showNotification;
+  var errorBlock = window.notification.errorBlock;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
+
+  var Price = {
+    ANY: 'any',
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high'
+  };
+
+  var PricingStep = {
+    LOW: 10000,
+    HIGH: 50000
+  };
 
   var filterForm = map.querySelector('.map__filters');
   var filterFormType = filterForm.querySelector('#housing-type');
@@ -31,16 +43,6 @@
     filterFormFeatures
   ];
 
-  var Price = {
-    ANY: 'any',
-    LOW: 'low',
-    MIDDLE: 'middle',
-    HIGH: 'high'
-  };
-  var PricingStep = {
-    LOW: 10000,
-    HIGH: 50000
-  };
   // ---------------------------------------------------------------
 
   var ads = [];
@@ -64,16 +66,19 @@
 
   var updatePins = function () {
     // Сравниваем у всех доступных после разных этапов фильтрации объявлений:
+
     // ----------- 1. Типы -----------
-    var sameTypeAds = ads.filter(function (ad) {
+
+    var filteredAds = ads.filter(function (ad) {
       if (!selected.type || selected.type === HouseType.ANY) {
         return true;
       }
       return ad.offer.type === selected.type;
-    });
+    })
 
     // ----------- 2. Цены -----------
-    var samePriceAds = sameTypeAds.filter(function (ad) {
+
+    .filter(function (ad) {
       switch (selected.price) {
         case Price.LOW:
           return ad.offer.price < PricingStep.LOW;
@@ -85,26 +90,28 @@
         default:
           return ad.offer.price;
       }
-    });
+    })
 
     // ----------- 3. Комнаты -----------
-    var sameRoomsAds = samePriceAds.filter(function (ad) {
+
+    .filter(function (ad) {
       if (!selected.rooms || selected.rooms === RoomsQuantity.ANY) {
         return true;
       }
       return ad.offer.rooms === +selected.rooms;
-    });
+    })
 
     // ----------- 4. Вместимость -----------
-    var sameCapacityAds = sameRoomsAds.filter(function (ad) {
+
+    .filter(function (ad) {
       if (!selected.capacity || selected.capacity === GuestsNumber.ANY) {
         return true;
       }
       return ad.offer.guests === +selected.capacity;
-    });
+    })
 
     // ----------- 5. Удобства -----------
-    var filteredAds = sameCapacityAds
+
     .filter(function (ad) {
       var selectedCounter = 0;
       selected.features.forEach(function (feature) {
@@ -171,6 +178,7 @@
 
   window.filter = {
     filterFormInputs: filterFormInputs,
-    filterForm: filterForm
+    filterForm: filterForm,
+    onRequestError: onRequestError
   };
 })();

@@ -372,7 +372,7 @@ fieldset {
   border: 1px solid transparent;
 }
 
-.map__filter:hover {
+.map__filter:not(:disabled):hover {
   border: 1px solid #ffaa99;
 }
 

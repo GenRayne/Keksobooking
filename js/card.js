@@ -3,14 +3,14 @@
 (function () {
   // --------------------- Импорт ---------------------
 
-  var HouseTypeToName = window.util.HouseTypeToName;
+  var houseTypeToName = window.util.houseTypeToName;
 
-  // ---------------- Переменные формы ----------------
+  // ---------------- Переменные модуля ----------------
 
-  var NumForDeclension = {
+  var NumberForDeclension = {
     SINGULAR: 1,
-    SINGULAR_DECL_MIN: 1,
-    SINGULAR_DECL_MAX: 5,
+    SINGULAR_DECLINED_MIN: 1,
+    SINGULAR_DECLINED_MAX: 5,
     PLURAL_1: 11
   };
 
@@ -26,7 +26,7 @@
     newCard.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
 
     var placeType = newCard.querySelector('.popup__type');
-    placeType.textContent = HouseTypeToName[ad.offer.type];
+    placeType.textContent = houseTypeToName[ad.offer.type];
     var capacity = newCard.querySelector('.popup__text--capacity');
     capacity.textContent = formCapacityText(ad.offer.rooms, ad.offer.guests);
     var hours = newCard.querySelector('.popup__text--time');
@@ -65,18 +65,18 @@
   var formCapacityText = function (roomsQuantity, guestsQuantity) {
     var text = roomsQuantity;
 
-    if (roomsQuantity === NumForDeclension.SINGULAR) {
+    if (roomsQuantity === NumberForDeclension.SINGULAR) {
       text += ' комната ';
-    } else if (roomsQuantity.toString().slice(-1) > NumForDeclension.SINGULAR_DECL_MIN &&
-               roomsQuantity.toString().slice(-1) < NumForDeclension.SINGULAR_DECL_MAX) {
+    } else if (roomsQuantity.toString().slice(-1) > NumberForDeclension.SINGULAR_DECLINED_MIN &&
+               roomsQuantity.toString().slice(-1) < NumberForDeclension.SINGULAR_DECLINED_MAX) {
       text += ' комнаты ';
     } else {
       text += ' комнат ';
     }
-    if (guestsQuantity === NumForDeclension.SINGULAR ||
-       (guestsQuantity > NumForDeclension.PLURAL_1 &&
-        guestsQuantity.toString().slice(-1) === NumForDeclension.SINGULAR &&
-        guestsQuantity.toString().slice(-2) !== NumForDeclension.PLURAL_1)) {
+    if (guestsQuantity === NumberForDeclension.SINGULAR ||
+       (guestsQuantity > NumberForDeclension.PLURAL_1 &&
+        guestsQuantity.toString().slice(-1) === NumberForDeclension.SINGULAR &&
+        guestsQuantity.toString().slice(-2) !== NumberForDeclension.PLURAL_1)) {
       text += 'для ' + guestsQuantity + ' гостя';
     } else {
       text += 'для ' + guestsQuantity + ' гостей';

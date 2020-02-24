@@ -24,18 +24,7 @@
     HOUSE: 'house',
     PALACE: 'palace'
   };
-  var HouseTypeToName = {
-    'bungalo': 'Бунгало',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'palace': 'Дворец'
-  };
-  var HouseTypeToMinPrice = {
-    'bungalo': '0',
-    'flat': '1000',
-    'house': '5000',
-    'palace': '10000'
-  };
+
   var RoomsQuantity = {
     ANY: 'any',
     1: '1',
@@ -43,6 +32,7 @@
     3: '3',
     100: '100'
   };
+
   var GuestsNumber = {
     ANY: 'any',
     1: '1',
@@ -50,11 +40,26 @@
     3: '3',
     0: '0'
   };
+
   var GuestsOption = {
     1: adFormCapacity.querySelector('option[value="1"]'),
     2: adFormCapacity.querySelector('option[value="2"]'),
     3: adFormCapacity.querySelector('option[value="3"]'),
     0: adFormCapacity.querySelector('option[value="0"]')
+  };
+
+  var houseTypeToName = {
+    'bungalo': 'Бунгало',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
+
+  var houseTypeToMinPrice = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000'
   };
 
   // =================================================================
@@ -63,11 +68,13 @@
   window.util = {
     Key: Key,
     HouseType: HouseType,
-    HouseTypeToName: HouseTypeToName,
-    HouseTypeToMinPrice: HouseTypeToMinPrice,
+    houseTypeToName: houseTypeToName,
+    houseTypeToMinPrice: houseTypeToMinPrice,
     RoomsQuantity: RoomsQuantity,
     GuestsNumber: GuestsNumber,
     GuestsOption: GuestsOption,
-    InvalidText: InvalidText
+    InvalidText: InvalidText,
+    adForm: adForm,
+    adFormCapacity: adFormCapacity
   };
 })();
