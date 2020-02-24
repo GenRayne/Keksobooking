@@ -280,7 +280,7 @@
   };
 
   var checkIfImage = function (input, label) {
-    if (input.value && !input.value.match(imageRegExp)) {
+    if (input.value && !input.value.toLowerCase().match(imageRegExp)) {
       markAsInvalid(label);
       return false;
     }
@@ -320,4 +320,12 @@
     evt.preventDefault();
     deactivateMap();
   });
+
+  // =================================================================
+  // Экспорт:
+  window.form = {
+    adFormAvatar: adFormAvatar,
+    adFormPhotos: adFormPhotos,
+    imageRegExp: imageRegExp
+  };
 })();
