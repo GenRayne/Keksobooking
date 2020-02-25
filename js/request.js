@@ -4,7 +4,7 @@
   // ---------------- Переменные модуля ----------------
 
   var Request = {
-    TIMEOUT: 10,
+    TIMEOUT: 10000,
     GET: 'GET',
     POST: 'POST',
     READY_STATE_LOAD: 4,
