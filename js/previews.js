@@ -4,22 +4,40 @@
   // --------------------- Импорт ---------------------
 
   var adForm = window.util.adForm;
-  var adFormAvatar = window.form.adFormAvatar;
-  var adFormPhotos = window.form.adFormPhotos;
-  var imageRegExp = window.form.imageRegExp;
 
   // ---------------- Переменные модуля ----------------
 
-  var MAX_FILES_NUMBER = 16;
+  var DEFAULT_AVATAR_SRC = 'img/muffin-grey.svg';
+  var imageRegExp = /.jpg$|.jpeg$|.png$/i;
 
+  var adFormAvatar = adForm.querySelector('#avatar');
   var avatarPreviewImg = adForm.querySelector('.ad-form-header__preview img');
+
+  var adFormPhotos = adForm.querySelector('#images');
   var photosBlock = adForm.querySelector('.ad-form__photo-container');
   var photoPreview = photosBlock.querySelector('.ad-form__photo');
 
   // =================================================================
 
   var isImage = function (file) {
-    return file.name.toLowerCase().match(imageRegExp);
+    return file.name.match(imageRegExp);
+  };
+
+  var resetAvatar = function () {
+    avatarPreviewImg.src = DEFAULT_AVATAR_SRC;
+  };
+
+  var resetPhotos = function () {
+    var previews = photosBlock.querySelectorAll('.ad-form__photo');
+
+    var files = adFormPhotos.files;
+    for (var i = 0; i < previews.length; i++) {
+      photosBlock.removeChild(previews[i]);
+    }
+
+    if (!files.length) {
+      photosBlock.appendChild(photoPreview);
+    }
   };
 
   var photoPreviewImg = document.createElement('img');
@@ -42,17 +60,9 @@
 
   adFormPhotos.addEventListener('change', function () {
     var files = adFormPhotos.files;
+    resetPhotos();
 
-    var previews = photosBlock.querySelectorAll('.ad-form__photo');
-    for (var i = 0; i < previews.length; i++) {
-      photosBlock.removeChild(previews[i]);
-    }
-
-    if (!files.length) {
-      photosBlock.appendChild(photoPreview);
-    }
-
-    for (var j = 0; j < Math.min(files.length, MAX_FILES_NUMBER); j++) {
+    for (var j = 0; j < files.length; j++) {
       if (isImage(files[j])) {
         (function (file) {
           var reader = new FileReader();
@@ -70,4 +80,14 @@
       }
     }
   });
+
+  // =================================================================
+  // Экспорт:
+  window.previews = {
+    adFormAvatar: adFormAvatar,
+    adFormPhotos: adFormPhotos,
+    imageRegExp: imageRegExp,
+    resetAvatar: resetAvatar,
+    resetPhotos: resetPhotos
+  };
 })();

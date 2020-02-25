@@ -4,7 +4,7 @@
   // --------------------- Импорт ---------------------
 
   var Key = window.util.Key;
-  var createCard = window.card.createCard;
+  var renderCard = window.card.render;
 
   // ---------------- Переменные модуля ----------------
 
@@ -26,7 +26,7 @@
 
   // =================================================================
 
-  var createPin = function (ad) {
+  var renderPin = function (ad) {
     var newPin = pinButton.cloneNode(true);
 
     newPin.style.left = (ad.location.x - Pin.WIDTH / 2) + 'px';
@@ -39,13 +39,13 @@
     return newPin;
   };
 
-  var createPins = function (ads) {
+  var renderPins = function (ads) {
     clearMap();
     adsData = [];
 
     for (var i = 0; i < Math.min(ads.length, ADS_QUANTITY); i++) {
       if ('offer' in ads[i]) {
-        var newPin = createPin(ads[i]);
+        var newPin = renderPin(ads[i]);
         pinsBlock.appendChild(newPin);
 
         adsData.push({
@@ -93,7 +93,7 @@
       return item.pin === pin;
     });
 
-    var card = (adItem.card) ? adItem.card : createCard(adItem.ad);
+    var card = (adItem.card) ? adItem.card : renderCard(adItem.ad);
 
     if (!adItem.card) {
       map.insertBefore(card, filterContainer);
@@ -126,11 +126,9 @@
 
   window.pins = {
     map: map,
-    mainPin: mainPin,
-    pinsBlock: pinsBlock,
-    Pin: Pin,
+    main: mainPin,
     Key: Key,
-    createPins: createPins,
+    render: renderPins,
     clearMap: clearMap
   };
 })();

@@ -13,20 +13,26 @@
   var adForm = window.util.adForm;
   var adFormCapacity = window.util.adFormCapacity;
 
-  var showNotification = window.notification.showNotification;
+  var notify = window.notification.notify;
   var successBlock = window.notification.successBlock;
 
   var map = window.pins.map;
-  var mainPin = window.pins.mainPin;
+  var mainPin = window.pins.main;
   var clearMap = window.pins.clearMap;
-  var createPins = window.pins.createPins;
+  var renderPins = window.pins.render;
 
-  var MainPin = window.mainPin.MainPin;
-  var adFormAddress = window.mainPin.adFormAddress;
+  var MainPin = window.dragAndDrop.MainPin;
+  var adFormAddress = window.dragAndDrop.adFormAddress;
 
-  var filterForm = window.filter.filterForm;
-  var filterFormInputs = window.filter.filterFormInputs;
+  var filterForm = window.filter.form;
+  var filterFormInputs = window.filter.inputs;
   var onRequestError = window.filter.onRequestError;
+
+  var adFormAvatar = window.previews.adFormAvatar;
+  var adFormPhotos = window.previews.adFormPhotos;
+  var imageRegExp = window.previews.imageRegExp;
+  var resetAvatar = window.previews.resetAvatar;
+  var resetPhotos = window.previews.resetPhotos;
 
   // ---------------- Переменные модуля ----------------
 
@@ -35,9 +41,6 @@
     Y: mainPin.offsetTop + MainPin.ROUND_SIDE / 2
   };
 
-  var imageRegExp = /.jpg$|.jpeg$|.png$/i;
-
-  var adFormAvatar = adForm.querySelector('#avatar');
   var adFormAvatarLabel = adForm.querySelector('.ad-form-header__drop-zone');
   var adFormTitle = adForm.querySelector('#title');
   var adFormType = adForm.querySelector('#type');
@@ -47,7 +50,6 @@
   var adFormRooms = adForm.querySelector('#room_number');
   var adFormFeatures = adForm.querySelector('.features');
   var adFormDescription = adForm.querySelector('#description');
-  var adFormPhotos = adForm.querySelector('#images');
   var adFormPhotosLabel = adForm.querySelector('.ad-form__drop-zone');
   var adFormResetBtn = adForm.querySelector('.ad-form__reset');
   var adFormSubmitBtn = adForm.querySelector('.ad-form__submit');
@@ -105,6 +107,8 @@
     filterForm.reset();
     adForm.reset();
     disableForms();
+    resetAvatar();
+    resetPhotos();
     invalidTitleMessageBox.classList.add('hidden');
     invalidPriceMessageBox.classList.add('hidden');
     clearMap();
@@ -138,7 +142,7 @@
   };
 
   var onRequestSuccess = function (data) {
-    createPins(data);
+    renderPins(data);
     changeInputsState(filterFormInputs);
   };
 
@@ -206,7 +210,7 @@
   };
 
   var onPostSuccess = function () {
-    showNotification(successBlock);
+    notify(successBlock);
   };
 
   // ------------------ Функции для валидации ------------------
@@ -280,7 +284,7 @@
   };
 
   var checkIfImage = function (input, label) {
-    if (input.value && !input.value.toLowerCase().match(imageRegExp)) {
+    if (input.value && !input.value.match(imageRegExp)) {
       markAsInvalid(label);
       return false;
     }
@@ -320,12 +324,4 @@
     evt.preventDefault();
     deactivateMap();
   });
-
-  // =================================================================
-  // Экспорт:
-  window.form = {
-    adFormAvatar: adFormAvatar,
-    adFormPhotos: adFormPhotos,
-    imageRegExp: imageRegExp
-  };
 })();
