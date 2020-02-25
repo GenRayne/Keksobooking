@@ -372,7 +372,7 @@ fieldset {
   border: 1px solid transparent;
 }
 
-.map__filter:hover {
+.map__filter:not(:disabled):hover {
   border: 1px solid #ffaa99;
 }
 
@@ -807,6 +807,8 @@ fieldset {
 }
 
 .ad-form__photo {
+  display: flex;
+  align-items: center;
   margin-right: 10px;
   margin-bottom: 10px;
 
@@ -815,6 +817,12 @@ fieldset {
 
   background-color: #e4e4de;
   border-radius: 5px;
+  overflow: hidden;
+}
+
+.ad-form__photo-preview {
+  width: 100%;
+  height: auto;
 }
 
 .ad-form__element--submit {
@@ -875,6 +883,12 @@ fieldset {
           box-shadow: 0 0 2px 2px #ff6547;
 }
 
+.invalid-message {
+  margin-top: 4px;
+  padding-right: 20px;
+  font-size: 12px;
+  color: lightcoral;
+}
 
 /* Футер
    ========================================================================== */
@@ -1155,6 +1169,8 @@ fieldset {
 .popup__photo {
   margin-right: 5px;
   margin-bottom: 5px;
+  width: 45px;
+  height: 40px;
 }
 
 .popup__photo:hover {
