@@ -19,7 +19,7 @@
 
   // ======================= Создание карточки =======================
 
-  var createCard = function (ad) {
+  var renderCard = function (ad) {
     var newCard = cardContainer.cloneNode(true);
     newCard.querySelector('.popup__title').textContent = ad.offer.title;
     newCard.querySelector('.popup__text--address').textContent = ad.offer.address;
@@ -109,7 +109,7 @@
   // Экспорт:
 
   window.card = {
-    createCard: createCard
+    render: renderCard
   };
 
 })();

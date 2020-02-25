@@ -4,13 +4,13 @@
   // --------------------- Импорт ---------------------
 
   var map = window.pins.map;
-  var createPins = window.pins.createPins;
+  var renderPins = window.pins.render;
   var HouseType = window.util.HouseType;
 
   var RoomsQuantity = window.util.RoomsQuantity;
   var GuestsNumber = window.util.GuestsNumber;
 
-  var showNotification = window.notification.showNotification;
+  var notify = window.notification.notify;
   var errorBlock = window.notification.errorBlock;
 
   // ---------------- Переменные модуля ----------------
@@ -56,7 +56,7 @@
   };
 
   var onRequestError = function (message) {
-    showNotification(errorBlock, message);
+    notify(errorBlock, message);
   };
   var onRequestSuccess = function (data) {
     ads = data;
@@ -123,7 +123,7 @@
              selected.features.length === selectedCounter;
     });
 
-    createPins(filteredAds);
+    renderPins(filteredAds);
   };
 
   // --------------------- Обработчики ---------------------
@@ -177,8 +177,8 @@
   // Экспорт:
 
   window.filter = {
-    filterFormInputs: filterFormInputs,
-    filterForm: filterForm,
+    inputs: filterFormInputs,
+    form: filterForm,
     onRequestError: onRequestError
   };
 })();

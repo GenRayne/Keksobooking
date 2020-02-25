@@ -3,7 +3,7 @@
 (function () {
   // --------------------- Импорт ---------------------
   var map = window.pins.map;
-  var mainPin = window.pins.mainPin;
+  var mainPin = window.pins.main;
 
   // ---------------- Переменные модуля ----------------
 
@@ -27,7 +27,8 @@
   var limitDrag = function (coord, min, max) {
     if (coord < min) {
       return min;
-    } else if (coord > max) {
+    }
+    if (coord > max) {
       return max;
     }
     return coord;
@@ -87,7 +88,7 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  window.mainPin = {
+  window.dragAndDrop = {
     adForm: adForm,
     adFormAddress: adFormAddress,
     MainPin: MainPin

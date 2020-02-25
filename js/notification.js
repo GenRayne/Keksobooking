@@ -24,7 +24,7 @@
 
   // ============== Уведомления по результатам отправки формы ==============
 
-  var showNotification = function (block, message) {
+  var notify = function (block, message) {
     if (message) {
       errorMessage.textContent = message;
     }
@@ -79,7 +79,7 @@
   // Экспорт:
 
   window.notification = {
-    showNotification: showNotification,
+    notify: notify,
     errorBlock: errorBlock,
     successBlock: successBlock
   };

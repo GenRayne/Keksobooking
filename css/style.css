@@ -807,6 +807,8 @@ fieldset {
 }
 
 .ad-form__photo {
+  display: flex;
+  align-items: center;
   margin-right: 10px;
   margin-bottom: 10px;
 
@@ -815,6 +817,12 @@ fieldset {
 
   background-color: #e4e4de;
   border-radius: 5px;
+  overflow: hidden;
+}
+
+.ad-form__photo-preview {
+  width: 100%;
+  height: auto;
 }
 
 .ad-form__element--submit {
