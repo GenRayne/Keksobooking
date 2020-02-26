@@ -127,7 +127,6 @@
   window.pins = {
     map: map,
     main: mainPin,
-    Key: Key,
     render: renderPins,
     clearMap: clearMap
   };

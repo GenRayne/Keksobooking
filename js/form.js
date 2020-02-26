@@ -100,7 +100,7 @@
     map.classList.remove('map--faded');
     enableForms();
     mainPin.removeEventListener('keydown', onMainPinEnterPress);
-    window.request('GET', onRequestSuccess, onRequestError);
+    window.load('GET', onRequestSuccess, onRequestError);
   };
 
   var deactivateMap = function () {
@@ -204,7 +204,7 @@
     evt.preventDefault();
     if (checkFormValidity()) {
       var adFormData = new FormData(adForm);
-      window.request('POST', onPostSuccess, onRequestError, adFormData);
+      window.load('POST', onPostSuccess, onRequestError, adFormData);
       deactivateMap();
     }
   };

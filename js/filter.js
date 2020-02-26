@@ -171,7 +171,7 @@
 
   // =================================================================
 
-  window.request('GET', onRequestSuccess, onRequestError);
+  window.load('GET', onRequestSuccess, onRequestError);
 
   // =================================================================
   // Экспорт:

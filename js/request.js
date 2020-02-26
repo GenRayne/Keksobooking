@@ -24,7 +24,7 @@
 
   // =================================================================
 
-  window.request = function (method, onSuccess, onError, data) {
+  window.load = function (method, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
 
     xhr.addEventListener('load', function () {
